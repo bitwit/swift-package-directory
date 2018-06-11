@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# echo 'compile.sh starting'
+# This is copied mostly from IBM Serverless documentation
+# Currently it appears that 
+# swift executables get wrapped with a little extra to function properly
+
 set -ex
 
 if [ -z "$1" ] ; then

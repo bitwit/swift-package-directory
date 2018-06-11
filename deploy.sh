@@ -7,28 +7,16 @@ if [ -z "$1" ] ; then
     echo 'Error: Missing action name'
     exit 1
 fi
-if [ -z "$2" ] ; then
-    echo 'Error: Missing kind, for example swift:4.1'
-    exit 2
-fi
+
 OUTPUT_DIR="build"
-if [ ${2} == "swift:3.1.1" ]; then
-  BASE_PATH="/swift3Action"
-  DEST_SOURCE="$BASE_PATH/spm-build"
-  RUNTIME="openwhisk/action-swift-v3.1.1"
-elif [ ${2} == "swift:4.1" ]; then
-  RUNTIME="ibmfunctions/action-swift-v4.1"
-  BASE_PATH="/swift4Action"
-  DEST_SOURCE="/$BASE_PATH/spm-build/Sources/Action"
-else
-  echo "Error: Kind $2 not recognize"
-  exit 3
-fi
+RUNTIME="ibmfunctions/action-swift-v4.1"
+BASE_PATH="/swift4Action"
+DEST_SOURCE="/$BASE_PATH/spm-build/Sources/Action"
 DEST_PACKAGE_SWIFT="$BASE_PATH/spm-build/Package.swift"
 
 BUILD_FLAGS=""
-if [ -n "$3" ] ; then
-    BUILD_FLAGS=${3}
+if [ -n "$2" ] ; then
+    BUILD_FLAGS=${2}
 fi
 
 echo "Using runtime $RUNTIME to compile swift"
@@ -51,10 +39,8 @@ cat $BASE_PATH/epilogue.swift >> $DEST_SOURCE/main.swift
 echo '_run_main(mainFunction:main)' >> $DEST_SOURCE/main.swift
 
 # Only for Swift4
-if [ ${2} != "swift:3.1.1" ]; then
-  echo 'Adding wait to deal with escaping'
-  echo '_ = _whisk_semaphore.wait(timeout: .distantFuture)' >> $DEST_SOURCE/main.swift
-fi
+echo 'Adding wait to deal with escaping'
+echo '_ = _whisk_semaphore.wait(timeout: .distantFuture)' >> $DEST_SOURCE/main.swift
 
 echo \"Compiling $1...\"
 cd /$BASE_PATH/spm-build
@@ -67,3 +53,5 @@ echo 'Creating archive $1.zip...'
 mkdir -p /owexec/$OUTPUT_DIR
 zip \"/owexec/$OUTPUT_DIR/$1.zip\" .build/release/Action
 "
+
+bx wsk action update swift-package-directory/$1 build/$1.zip --kind swift:4.1

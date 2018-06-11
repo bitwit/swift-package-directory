@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "search-packages",
+    name: "build-database",
     dependencies: [
     ],
     targets: [

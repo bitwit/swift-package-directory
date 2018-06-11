@@ -128,10 +128,8 @@ header .navbar.navbar-light .nav-link.active {
 }
 
 .site-hero {
-  background: #FF4235;
+  background: linear-gradient(#FF4235, #FAB64D);
   background-position: center center;
-  min-height: 750px;
-  height: 100vh;
 }
 
 .site-hero > .container {
@@ -160,8 +158,8 @@ header .navbar.navbar-light .nav-link.active {
 }
 
 .site-hero .site-hero-inner {
-  min-height: 750px;
-  height: 100vh;
+  min-height: 400px;
+  height: 60vh;
 }
 
 .site-hero-innerpage, .site-hero-innerpage .site-hero-inner {

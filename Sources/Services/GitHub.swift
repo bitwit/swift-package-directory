@@ -3,6 +3,10 @@ import PromiseKit
 
 public class GitHub {
     
+    public init () {
+        
+    }
+    
     public func getRepoInfo(name: String) -> Promise<Package> {
         
         let repoUrlString = "https://api.github.com/repos/\(name)"

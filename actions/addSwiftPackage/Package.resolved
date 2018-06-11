@@ -9,6 +9,15 @@
           "revision": "ceda08329824ffff8055003c92fe05421f9efea3",
           "version": "6.3.0"
         }
+      },
+      {
+        "package": "swift-package-directory",
+        "repositoryURL": "/Users/kylenewsome/Development/personal/swift-package-directory",
+        "state": {
+          "branch": null,
+          "revision": "bd4d868a54b61ce18c3c397b0677a97d7234f635",
+          "version": "0.0.1"
+        }
       }
     ]
   },

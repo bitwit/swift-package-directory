@@ -2,6 +2,8 @@
 .build/
 build/
 /Packages
+Package.resolved
 
 *.xcodeproj
+*.xcworkspace
 actions/test-action/.build

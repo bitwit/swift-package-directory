@@ -1,5 +1,6 @@
 import Foundation
 import PromiseKit
+import SPDCore
 
 struct Input: Codable {
     let cloudantUrl: String
@@ -27,28 +28,27 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
 //            completion(nil, err)
 //    }
 
-      _ = cloudant.search(term: "s", searchIndex: param.searchIndex!)
-         .done({ packages in
-            print(packages)
-            print(packages.count, "packages found")
-             completion(Output(package: packages.first), nil)
-         })
-         .catch { err in
-             completion(nil, err)
-        }
-    
-//    cloudant.find(repository: param.repository)
-//        .then { (document) in
-//            return packageManager.createOrUpdatePackage(repositoryName: param.repository, existingPackage: document)
+//      _ = cloudant.search(term: "s", searchIndex: param.searchIndex!)
+//         .done({ packages in
+//            print(packages)
+//            print(packages.count, "packages found")
+//             completion(Output(package: packages.first), nil)
+//         })
+//         .catch { err in
+//             completion(nil, err)
 //        }
-//        .done({ package in
-//            print(package)
-//            completion(Output(package: package), nil)
-//        })
-//        .catch { err in
-//            completion(nil, err)
-//    }
 //
+    cloudant.find(repository: param.repository)
+        .then { (document) in
+            return packageManager.createOrUpdatePackage(repositoryName: param.repository, existingPackage: document)
+        }
+        .done({ package in
+            print(package)
+            completion(Output(package: package), nil)
+        })
+        .catch { err in
+            completion(nil, err)
+    }
     RunLoop.main.run()
 }
 

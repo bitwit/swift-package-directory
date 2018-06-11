@@ -15,8 +15,9 @@
         if (data.docs.length == 0) {
             list.append(`<li class="list-group-item"><strong>No Results Found</strong></li>`)
         } else {
+          console.log(data.docs);
           data.docs.forEach((doc) => {
-            list.append(`<li class="list-group-item">${doc.name}</li>`)
+            list.append(`<li class="list-group-item"><a target="_blank" href="${doc.html_url}"><strong>${doc.full_name}</strong> - ${doc.description}</a></li>`)
           });
         }
       }

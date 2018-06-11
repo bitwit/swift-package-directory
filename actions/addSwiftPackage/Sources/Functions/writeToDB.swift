@@ -10,12 +10,12 @@ func writeToDB(cloudantUrl: String, package: Package, completion: @escaping (Err
     
     guard let url = URL(string: cloudantUrl + "/swift-packages-directory/\(package._id ?? "")") else {
         completion(SPDError.fatal("invalid url"))
-        exit(0)
+        exit(1)
     }
     
     var finalPackage = package
     finalPackage.buildKeywords()
-    finalPackage.html_url = finalPackage.html_url.lowercased()
+    finalPackage.html_url = finalPackage.html_url?.lowercased()
     
     print("keywords:", finalPackage.keywords)
 
@@ -29,23 +29,22 @@ func writeToDB(cloudantUrl: String, package: Package, completion: @escaping (Err
         
         if error != nil {
             completion(SPDError.fatal("database response error"))
-            exit(0)
+            exit(1)
         }
         
         guard let json = data else {
             completion(SPDError.fatal("database response nil"))
-            exit(0)
+            exit(1)
         }
         
         print(try! JSONSerialization.jsonObject(with: json, options: []))
         
-        guard let result = try? JSONDecoder().decode(WrittenDocumentResult.self, from: json) else {
+        guard let _ = try? JSONDecoder().decode(WrittenDocumentResult.self, from: json) else {
             completion(SPDError.fatal("failed to decode to expected JSON response"))
-            exit(0)
+            exit(1)
         }
         
         completion(error)
-        exit(0)
     }
     
     task.resume()

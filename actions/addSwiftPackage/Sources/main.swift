@@ -6,34 +6,26 @@ struct Input: Codable {
 }
 
 struct Output: Codable {
-    let package: Package
-}
-
-enum SPDError: Error {
-    case fatal(String)
+    let package: Package?
 }
 
 func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void {
     
+//    findAllInDB(cloudantUrl: param.cloudantUrl) { packages, error  -> Void in
+//
+//        packages?.forEach({ (package) in
+//            guard let repoName = package.full_name else { return }
+//            createOrUpdatePackage(cloudantUrl: param.cloudantUrl, repositoryName: repoName, existingPackage: package) { (package, error) in
+////                completion(Output(package: package), error)
+//            }
+//        })
+//    }
+    
     findInDB(cloudantUrl: param.cloudantUrl, repository: param.repository) { (document, error) in
-        
-        getRepoInfo(name: param.repository) { (package, error) in
-            
-            guard var pkg = package else {
-                fatalError("no package")
-            }
-            
-            if let doc = document {
-                print("Doc already exists; updating")
-                pkg.apply(document: doc)
-            }
-            
-            writeToDB(cloudantUrl: param.cloudantUrl, package: pkg) { (error) in
-                completion(Output(package: pkg), error)
-            }
+        createOrUpdatePackage(cloudantUrl: param.cloudantUrl, repositoryName: param.repository, existingPackage: document) { (package, error) in
+            completion(Output(package: package), error)
         }
     }
-
 
     RunLoop.main.run()
 }
@@ -42,7 +34,7 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
 guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
     fatalError("no cloudantUrl provided")
 }
-main(param: Input(repository: "JohnSundell/ShellOut", cloudantUrl: urlString)) { output, error in
+main(param: Input(repository: "pixyzehn/PackageBuilder", cloudantUrl: urlString)) { output, error in
     print(output, error)
 }
 #endif

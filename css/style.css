@@ -127,11 +127,6 @@ header .navbar.navbar-light .nav-link.active {
   color: #fff;
 }
 
-.site-hero {
-  background: linear-gradient(#FF4235, #FAB64D);
-  background-position: center center;
-}
-
 .site-hero > .container {
   position: relative;
   z-index: 2;
@@ -157,10 +152,32 @@ header .navbar.navbar-light .nav-link.active {
   color: #fff;
 }
 
+/* kyle changes */
+
+.site-hero {
+  background: linear-gradient(#FF4235, #FAB64D);
+  background-position: center center;
+}
 .site-hero .site-hero-inner {
   min-height: 400px;
   height: 60vh;
 }
+
+#results-list {
+  font-size: 20px;
+}
+
+#results-list strong {
+  color: #FF4235;
+}
+#results-list a {
+  color: #999999;
+}
+#results-list a:hover {
+  text-decoration: underline;
+}
+
+/* END */
 
 .site-hero-innerpage, .site-hero-innerpage .site-hero-inner {
   min-height: 550px;

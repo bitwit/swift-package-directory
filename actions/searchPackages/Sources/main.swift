@@ -11,20 +11,17 @@ struct Output: Codable {
     let docs: [Document]
 }
 
-struct DocumentContainer: Codable {
-    let id: String
-    let key: String
-    let doc: Document?
-}
-
 struct Query: Codable {
     let selector: [String: String]
     let use_index: String
 }
 
 struct Document: Codable {
-    let name: String
-    let full_name: String
+    var name: String?
+    var full_name: String?
+    var description: String?
+    var html_url: String?
+    var keywords: String?
 }
 
 enum SPDError: Error {

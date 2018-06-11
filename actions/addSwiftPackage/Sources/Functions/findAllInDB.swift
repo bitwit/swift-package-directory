@@ -1,25 +1,19 @@
 import Foundation
 
-struct Document: Codable {
-    let _id: String
-    let _rev: String
+struct FindAllResults: Codable {
+    let total_rows: Int
+    let rows: [DocumentContainer]
 }
 
-struct SearchResults: Codable {
-    let docs: [Document]
-}
-
-func findInDB(cloudantUrl: String, repository: String, completion: @escaping (Document?, Error?) -> ()) {
+func findAllInDB(cloudantUrl: String, completion: @escaping ([Package]?, Error?) -> ()) {
     
-    guard let url = URL(string: cloudantUrl + "/swift-packages-directory/_find") else {
+    guard let url = URL(string: cloudantUrl + "/swift-packages-directory/_all_docs?include_docs=true") else {
         completion(nil, SPDError.fatal("invalid url"))
-        exit(0)
+        exit(1)
     }
     
-    let query: [String: [String: String]] = [
-        "selector": [
-            "html_url": "https://github.com/" + repository.lowercased()
-        ]
+    let query: [String: [String]] = [
+        "fields": [ "_id", "_rev", "full_name"]
     ]
     
     var req = URLRequest(url: url)
@@ -32,22 +26,22 @@ func findInDB(cloudantUrl: String, repository: String, completion: @escaping (Do
         
         if error != nil {
             completion(nil, SPDError.fatal("database response error"))
-            exit(0)
+            exit(1)
         }
         
         guard let json = data else {
             completion(nil, SPDError.fatal("database response nil"))
-            exit(0)
+            exit(1)
         }
         
-//        print(try! JSONSerialization.jsonObject(with: json, options: []))
+        print(try! JSONSerialization.jsonObject(with: json, options: []))
         
-        guard let results = try? JSONDecoder().decode(SearchResults.self, from: json) else {
+        guard let results = try? JSONDecoder().decode(FindAllResults.self, from: json) else {
             completion(nil, SPDError.fatal("failed to decode to expected JSON response"))
-            exit(0)
+            exit(1)
         }
         
-        completion(results.docs.first, error)
+        completion(results.rows.compactMap({ $0.doc }), error)
     }
     task.resume()
 }

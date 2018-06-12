@@ -45,6 +45,8 @@ cp /owexec/Package.swift $BASE_PATH/
 cat $BASE_PATH/epilogue.swift >> $DEST_SOURCE/main.swift
 echo '_run_main(mainFunction:main)' >> $DEST_SOURCE/main.swift
 
+cat $DEST_SOURCE/main.swift
+
 # Only for Swift4
 echo 'Adding wait to deal with escaping'
 echo '_ = _whisk_semaphore.wait(timeout: .distantFuture)' >> $DEST_SOURCE/main.swift
@@ -57,7 +59,7 @@ cd $DEST_SOURCE
 # cat $DEST_PACKAGE_SWIFT
 
 # we have our own Package.swift, do a full compile
-swift build ${BUILD_FLAGS} -c release --verbose
+swift build ${BUILD_FLAGS} -c release
 
 echo 'Creating archive $1.zip...'
 #.build/release/Action

@@ -25,11 +25,6 @@
     });
   }
 
-  // searchInput.on('input', function (e) {
-  //   e.preventDefault();
-  //   performSearch();
-  // });
-
   $('#search-form').submit((e) => {
     e.preventDefault();
     performSearch();
@@ -39,7 +34,6 @@
 
 (function($) {
   'use strict';
-
 
   $('#add-form').submit((e) => {
     e.preventDefault();

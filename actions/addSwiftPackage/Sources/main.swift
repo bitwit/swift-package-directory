@@ -5,6 +5,8 @@ import SPDCore
 struct Input: Codable {
     let cloudantUrl: String
     let repository: String
+    let githubAccessToken: String
+    let githubUsername: String
 }
 
 struct Output: Codable {
@@ -14,7 +16,7 @@ struct Output: Codable {
 func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void {
     
     let cloudant = Cloudant(baseUrl: param.cloudantUrl)
-    let github = GitHub()
+    let github = GitHub(username: param.githubUsername, accessToken: param.githubAccessToken)
     let packageManager = PackageManager(cloudant: cloudant, github: github)
     
     cloudant.find(repository: param.repository)
@@ -39,7 +41,14 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
 guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
     fatalError("no cloudantUrl provided")
 }
-main(param: Input(cloudantUrl: urlString, repository: "bitwit/slurp")) { output, error in
+guard let githubUsername = ProcessInfo().environment["githubUsername"] else {
+    fatalError("no githubUsername provided")
+}
+guard let githubAccessToken = ProcessInfo().environment["githubAccessToken"] else {
+    fatalError("no githubAccessToken provided")
+}
+
+main(param: Input(cloudantUrl: urlString, repository: "bitwit/slurp", githubAccessToken: githubAccessToken, githubUsername: githubUsername)) { output, error in
     print(output, error)
     exit(error == nil ? 0 : 1)
 }

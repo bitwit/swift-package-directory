@@ -52,20 +52,19 @@ echo '_run_main(mainFunction:main)' >> $DEST_SOURCE/main.swift
 echo 'Adding wait to deal with escaping'
 echo '_ = _whisk_semaphore.wait(timeout: .distantFuture)' >> $DEST_SOURCE/main.swift
 
-cat $DEST_SOURCE/main.swift 
-
 echo \"Compiling $1...\"
 cd $BASE_PATH/actions/$1
-
-BIN_PATH=\$($SWIFT_BUILD_COMMAND --show-bin-path)
+# BIN_PATH=\$($SWIFT_BUILD_COMMAND --show-bin-path)
 $SWIFT_BUILD_COMMAND
 
-stat \$BIN_PATH/Action
+# stat \$BIN_PATH/Action
+# stat .build/release/Action 
 
 echo 'Creating archive $1.zip...'
-cd \$BIN_PATH
+# mkdir -p .build/release/
+# cp \$BIN_PATH/Action .build/release/Action
 mkdir -p /owexec/$OUTPUT_DIR
-zip \"/owexec/$OUTPUT_DIR/$1.zip\" Action
+zip \"/owexec/$OUTPUT_DIR/$1.zip\" .build/release/Action
 "
 
 bx wsk action update swift-package-directory/$1 build/$1.zip --kind swift:4.1

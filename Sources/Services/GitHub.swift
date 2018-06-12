@@ -17,6 +17,12 @@ public class GitHub {
         
         let req = URLRequest(url: url)
         return perform(request: req, transformingResponseTo: Package.self)
+            .map({ (package) -> Package in
+                guard package.full_name != nil && package.html_url != nil else {
+                    throw SPDError.fatal("Package does not exist")
+                }
+                return package
+            })
     }
 
 }

@@ -6,4 +6,5 @@ Package.resolved
 
 *.xcodeproj
 *.xcworkspace
-actions/test-action/.build
+
+node_modules/

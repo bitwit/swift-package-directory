@@ -9,7 +9,7 @@ struct Input: Codable {
 }
 
 struct Output: Codable {
-    let package: Package?
+    let packages: [Package]
 }
 
 func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void {
@@ -18,10 +18,14 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
         .done({ packages in
             print(packages)
             print(packages.count, "packages found")
-            completion(Output(package: packages.first), nil)
+            completion(Output(packages: packages), nil)
         })
         .catch { err in
             completion(nil, err)
+            exit(1)
+    }
+        .finally {
+            exit(0)
     }
     RunLoop.main.run()
 }

@@ -63,8 +63,9 @@ $SWIFT_BUILD_COMMAND
 stat \$BIN_PATH/Action
 
 echo 'Creating archive $1.zip...'
+cd \$BIN_PATH
 mkdir -p /owexec/$OUTPUT_DIR
-zip \"/owexec/$OUTPUT_DIR/$1.zip\" \$BIN_PATH/Action
+zip \"/owexec/$OUTPUT_DIR/$1.zip\" Action
 "
 
 bx wsk action update swift-package-directory/$1 build/$1.zip --kind swift:4.1

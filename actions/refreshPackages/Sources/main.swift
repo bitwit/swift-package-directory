@@ -25,6 +25,9 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
         .catch { err in
             completion(nil, err)
     }
+        .finally {
+            exit(0)
+    }
 
     RunLoop.main.run()
 }

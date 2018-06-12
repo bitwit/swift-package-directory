@@ -26,7 +26,7 @@ public struct Package: Codable {
     public var forks_count: Int?
     public var stargazers_count: Int?
     
-//    public var latest_tag: String?
+    public var latest_tag: String?
     
     public mutating func applyIdentification(from package: Package) {
         self._id = package._id

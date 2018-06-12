@@ -22,7 +22,7 @@ func main () {
             return packageManager.createOrUpdatePackage(repositoryName: "reactivex/rxswift", existingPackage: document)
         }
         .done({ package in
-            print(package)
+            print(try! JSONSerialization.jsonObject(with: try! JSONEncoder().encode(package), options: []))
         })
         .catch { err in
             print(err)

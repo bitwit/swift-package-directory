@@ -51,7 +51,7 @@ public class PackageManager {
         return when(fulfilled: github.getRepoInfo(name: repositoryName), github.getRepoTags(name: repositoryName))
             .then { package, tags -> Promise<Package> in
                 var pkg = package
-//                pkg.latest_tag = tags.first?.name
+                pkg.latest_tag = tags.first?.name
                 if let doc = existingPackage {
                     print("[Updating] ", pkg.full_name!)
                     pkg.applyIdentification(from: doc)

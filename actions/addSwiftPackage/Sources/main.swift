@@ -39,7 +39,7 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
 guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
     fatalError("no cloudantUrl provided")
 }
-main(param: Input(cloudantUrl: urlString, repository: "phn/PackageBuilder")) { output, error in
+main(param: Input(cloudantUrl: urlString, repository: "bitwit/slurp")) { output, error in
     print(output, error)
     exit(error == nil ? 0 : 1)
 }

@@ -26,20 +26,33 @@ public struct Package: Codable {
     }
     
     public mutating func buildKeywords() {
-        var words = ""
+        var keywords = ""
+        keywords.append(self.name?.brokenDownForKeywords())
         
-        guard let name = self.name else { return }
-        
+        if let name = self.name {
+           keywords += name.brokenDownForKeywords()
+        }
+        if let desc = self.description?.split(separator: " ").map({ String($0).brokenDownForKeywords() }) {
+            keywords += desc.joined(separator: " ")
+        }
+        if let fullName = self.full_name {
+            keywords + = fullName.replacingOccurrences(of: "/", with: " ")
+        }
+        self.keywords = keywords
+    }
+    
+}
+
+extension String {
+    
+    public func brokenDownForKeywords() -> String {
+        var keywords = ""
         var lastWord = ""
-        for char in name {
+        for char in self {
             let newWord = lastWord + String(char)
             lastWord = newWord
-            words += "\(newWord) "
+            keywords += "\(newWord) "
         }
-        
-        self.keywords = words
-            + (description ?? "")
-            + " "
-            + (full_name?.replacingOccurrences(of: "/", with: " ") ?? "")
+        return keywords
     }
 }

@@ -10,35 +10,37 @@ const sass = require('gulp-sass');
 const plumber = require('gulp-plumber');
 const concat = require('gulp-concat');
 
+const sourceRoot = './web/src/';
+const publicRoot = './web/public/';
+
 gulp.task('copyFonts', () => {
-	return gulp.src('./src/fonts/**/**')
-		.pipe(gulp.dest('./public/fonts'))
+	return gulp.src(sourceRoot + 'fonts/**/**')
+		.pipe(gulp.dest(publicRoot + 'fonts'))
 });
 
 gulp.task('copyImages', () => {
-	return gulp.src('./src/images/**/**')
-		.pipe(gulp.dest('./public/images'))
+	return gulp.src(sourceRoot + 'images/**/**')
+		.pipe(gulp.dest(publicRoot + 'images'))
 });
 
 gulp.task('copyHTML', () => {
-	return gulp.src('./src/**.html')
-		.pipe(gulp.dest('./public'))
+	return gulp.src(sourceRoot + '**.html')
+		.pipe(gulp.dest(publicRoot))
 });
 
 gulp.task('copyJSLibs', () => {
-	return gulp.src(['./src/js/**.js', '!./src/js/main.js'])
-		.pipe(gulp.dest('./public/js'))
+	return gulp.src([sourceRoot + 'js/**.js', '!' + sourceRoot + 'js/main.js'])
+		.pipe(gulp.dest(publicRoot + 'js'))
 });
 
 gulp.task('styles', () => {
-	return gulp.src(['./src/scss/bootstrap.scss', './src/scss/style.scss'])
+	return gulp.src([sourceRoot + 'scss/bootstrap.scss', sourceRoot + 'scss/style.scss'])
 		.pipe(sass().on('error', sass.logError))
-		// .pipe(concat('style.css'))
-		.pipe(gulp.dest('./public/css'))
+		.pipe(gulp.dest(publicRoot + 'css'))
 });
 
 gulp.task('js', () => {
-	return browserify('./src/js/main.js', {debug: true})
+	return browserify(sourceRoot + 'js/main.js', {debug: true})
 		.transform('babelify', {
 			sourceMaps: true,
 			presets: ['env','react']
@@ -50,25 +52,25 @@ gulp.task('js', () => {
 		}))
 		.pipe(source('main.js'))
 		.pipe(buffer())
-		.pipe(gulp.dest('public/js'))
+		.pipe(gulp.dest(publicRoot + 'js'))
 		.pipe(reload({stream:true}));
 });
 
 gulp.task('bs', () => {
 	return browserSync.init({
 		server: {
-			baseDir: './public'
+			baseDir: publicRoot
 		}
 	});
 });
 
 gulp.task('default', ['bs', 'build'], () => {
-	gulp.watch('./src/**.html',['copyHTML']);
-	gulp.watch('./src/js/**/*.js',['js']);
-	gulp.watch('./src/css/**/*.scss',['styles']);
+	gulp.watch(sourceRoot + '**.html',['copyHTML']);
+	gulp.watch(sourceRoot + 'js/**/*.js',['js']);
+	gulp.watch(sourceRoot + 'css/**/*.scss',['styles']);
 
-	gulp.watch('./public/css/style.css',reload);
-	gulp.watch('./public/*.html',reload);
+	gulp.watch(publicRoot + 'css/style.css',reload);
+	gulp.watch(publicRoot + '*.html',reload);
 });
 
 gulp.task('build', ['js','styles', 'copyFonts', 'copyImages', 'copyHTML', 'copyJSLibs']);

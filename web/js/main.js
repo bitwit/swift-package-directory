@@ -2,7 +2,7 @@
   'use strict';
   const searchInput = $("#search-input");
   const performSearch = () => {
-    const url = "https://openwhisk.ng.bluemix.net/api/v1/web/kyle%40bitwit.ca_dev/swift-package-directory/searchPackages.json?query="
+    const url = "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/40586e5b69123c610ddfdaef22f087df48bc2d55a7e5031a20f808b57d498761/api/v0/search?query="
     const searchTerm = searchInput.val();
     if (searchTerm.length < 1) {
       $("#results").html('');
@@ -44,8 +44,12 @@
   $('#add-form').submit((e) => {
     e.preventDefault();
     let packageName = $("#add-input").val();
-    const url = "https://openwhisk.ng.bluemix.net/api/v1/web/kyle%40bitwit.ca_dev/swift-package-directory/addSwiftPackage.json?repository="
-    $.ajax(url + packageName, {
+    const url = "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/40586e5b69123c610ddfdaef22f087df48bc2d55a7e5031a20f808b57d498761/api/v0/add"
+    $.ajax(url, {
+      method: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify({ repository: packageName }),
+      dataType: "json",
       success: (data) => {
         console.log(data);
 

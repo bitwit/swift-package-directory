@@ -10,6 +10,10 @@ public struct DocumentContainer: Codable {
     public let doc: Package?
 }
 
+public struct GitTag: Codable {
+    let name: String
+}
+
 public struct Package: Codable {
     public var _id: String?
     public var _rev: String?
@@ -19,6 +23,10 @@ public struct Package: Codable {
     public var description: String?
     public var html_url: String?
     public var keywords: String?
+    public var forks_count: Int?
+    public var stargazers_count: Int?
+    
+//    public var latest_tag: String?
     
     public mutating func applyIdentification(from package: Package) {
         self._id = package._id

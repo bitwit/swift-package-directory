@@ -15,12 +15,13 @@ OUTPUT_DIR="build"
 RUNTIME="ibmfunctions/action-swift-v4.1"
 BASE_PATH="/swift4Action"
 DEST_SOURCE="/$BASE_PATH/actions/$1/Sources"
-DEST_PACKAGE_SWIFT="$BASE_PATH/spm-build/Package.swift"
+WHISK_SWIFT="$BASE_PATH/spm-build/Sources/Action/_Whisk.swift"
 
 BUILD_FLAGS=""
 if [ -n "$2" ] ; then
     BUILD_FLAGS=${2}
 fi
+SWIFT_BUILD_COMMAND="swift build ${BUILD_FLAGS} -c release"
 
 echo "Using runtime $RUNTIME to compile swift"
 docker run --rm --name=compile-ow-swift -it -v "$(pwd):/owexec" $RUNTIME bash -ex -c "
@@ -41,30 +42,29 @@ cp -R /owexec/actions/$1/Package.swift $BASE_PATH/actions/$1/Package.swift
 cp -R /owexec/Sources $BASE_PATH/
 cp /owexec/Package.swift $BASE_PATH/
 
+ls -a -l $BASE_PATH/spm-build/Sources/Action
 # Add in the OpenWhisk specific bits
+cp $WHISK_SWIFT $DEST_SOURCE/_Whisk.swift
 cat $BASE_PATH/epilogue.swift >> $DEST_SOURCE/main.swift
 echo '_run_main(mainFunction:main)' >> $DEST_SOURCE/main.swift
-
-cat $DEST_SOURCE/main.swift
 
 # Only for Swift4
 echo 'Adding wait to deal with escaping'
 echo '_ = _whisk_semaphore.wait(timeout: .distantFuture)' >> $DEST_SOURCE/main.swift
 
+cat $DEST_SOURCE/main.swift 
+
 echo \"Compiling $1...\"
-# cd /$BASE_PATH/spm-build
-cd $DEST_SOURCE
+cd $BASE_PATH/actions/$1
 
-# cp /owexec/actions/$1/Package.swift $DEST_PACKAGE_SWIFT
-# cat $DEST_PACKAGE_SWIFT
+BIN_PATH=\$($SWIFT_BUILD_COMMAND --show-bin-path)
+$SWIFT_BUILD_COMMAND
 
-# we have our own Package.swift, do a full compile
-swift build ${BUILD_FLAGS} -c release
+stat \$BIN_PATH/Action
 
 echo 'Creating archive $1.zip...'
-#.build/release/Action
 mkdir -p /owexec/$OUTPUT_DIR
-zip \"/owexec/$OUTPUT_DIR/$1.zip\" .build/release/Action
+zip \"/owexec/$OUTPUT_DIR/$1.zip\" \$BIN_PATH/Action
 "
 
 bx wsk action update swift-package-directory/$1 build/$1.zip --kind swift:4.1

@@ -2,6 +2,7 @@ const searchInput = $("#search-input");
 const performSearch = () => {
   const url = "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/40586e5b69123c610ddfdaef22f087df48bc2d55a7e5031a20f808b57d498761/api/v0/search?query="
   const searchTerm = searchInput.val();
+
   if (searchTerm.length < 1) {
     $("#results").html('');
   }

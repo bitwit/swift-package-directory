@@ -27,8 +27,7 @@ public struct Package: Codable {
     
     public mutating func buildKeywords() {
         var keywords = ""
-        keywords.append(self.name?.brokenDownForKeywords())
-        
+
         if let name = self.name {
            keywords += name.brokenDownForKeywords()
         }
@@ -36,7 +35,7 @@ public struct Package: Codable {
             keywords += desc.joined(separator: " ")
         }
         if let fullName = self.full_name {
-            keywords + = fullName.replacingOccurrences(of: "/", with: " ")
+            keywords += fullName.replacingOccurrences(of: "/", with: " ")
         }
         self.keywords = keywords
     }

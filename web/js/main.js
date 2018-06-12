@@ -25,10 +25,10 @@
     });
   }
 
-  searchInput.on('input', function (e) {
-    e.preventDefault();
-    performSearch();
-  });
+  // searchInput.on('input', function (e) {
+  //   e.preventDefault();
+  //   performSearch();
+  // });
 
   $('#search-form').submit((e) => {
     e.preventDefault();

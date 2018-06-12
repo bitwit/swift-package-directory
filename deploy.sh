@@ -14,7 +14,7 @@ fi
 OUTPUT_DIR="build"
 RUNTIME="ibmfunctions/action-swift-v4.1"
 BASE_PATH="/swift4Action"
-DEST_SOURCE="/$BASE_PATH/spm-build/Sources/Action"
+DEST_SOURCE="/$BASE_PATH/actions/$1/Sources"
 DEST_PACKAGE_SWIFT="$BASE_PATH/spm-build/Package.swift"
 
 BUILD_FLAGS=""
@@ -30,14 +30,18 @@ if [ -f \"/owexec/$OUTPUT_DIR/$1.zip\" ] ; then
 fi
 
 echo 'Setting up build...'
-cp /owexec/actions/$1/Sources/*.swift $DEST_SOURCE/
 
-# action file can be either {action name}.swift or main.swift
-if [ -f \"$DEST_SOURCE/$1.swift\" ] ; then
-    echo 'renaming $DEST_SOURCE/$1.swift $DEST_SOURCE/main.swift'
-    mv \"$DEST_SOURCE/$1.swift\" $DEST_SOURCE/main.swift
-fi
-# Add in the OW specific bits
+#copy everything
+mkdir $BASE_PATH/actions/
+mkdir $BASE_PATH/actions/$1
+cp -R /owexec/.git $BASE_PATH/
+
+cp -R /owexec/actions/$1/Sources $BASE_PATH/actions/$1
+cp -R /owexec/actions/$1/Package.swift $BASE_PATH/actions/$1/Package.swift
+cp -R /owexec/Sources $BASE_PATH/
+cp /owexec/Package.swift $BASE_PATH/
+
+# Add in the OpenWhisk specific bits
 cat $BASE_PATH/epilogue.swift >> $DEST_SOURCE/main.swift
 echo '_run_main(mainFunction:main)' >> $DEST_SOURCE/main.swift
 
@@ -46,10 +50,14 @@ echo 'Adding wait to deal with escaping'
 echo '_ = _whisk_semaphore.wait(timeout: .distantFuture)' >> $DEST_SOURCE/main.swift
 
 echo \"Compiling $1...\"
-cd /$BASE_PATH/spm-build
-cp /owexec/actions/$1/Package.swift $DEST_PACKAGE_SWIFT
+# cd /$BASE_PATH/spm-build
+cd $DEST_SOURCE
+
+# cp /owexec/actions/$1/Package.swift $DEST_PACKAGE_SWIFT
+# cat $DEST_PACKAGE_SWIFT
+
 # we have our own Package.swift, do a full compile
-swift build ${BUILD_FLAGS} -c release
+swift build ${BUILD_FLAGS} -c release --verbose
 
 echo 'Creating archive $1.zip...'
 #.build/release/Action

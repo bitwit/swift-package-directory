@@ -28,16 +28,6 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
 //            completion(nil, err)
 //    }
 
-//      _ = cloudant.search(term: "s", searchIndex: param.searchIndex!)
-//         .done({ packages in
-//            print(packages)
-//            print(packages.count, "packages found")
-//             completion(Output(package: packages.first), nil)
-//         })
-//         .catch { err in
-//             completion(nil, err)
-//        }
-//
     cloudant.find(repository: param.repository)
         .then { (document) in
             return packageManager.createOrUpdatePackage(repositoryName: param.repository, existingPackage: document)

@@ -17,12 +17,10 @@ func main () {
     let github = GitHub(username: githubUsername, accessToken: githubAccessToken)
     let packageManager = PackageManager(cloudant: cloudant, github: github)
     
-    let _ = cloudant.find(repository: "reactivex/rxswift")
-        .then { (document) in
-            return packageManager.createOrUpdatePackage(repositoryName: "reactivex/rxswift", existingPackage: document)
-        }
-        .done({ package in
-            print(try! JSONSerialization.jsonObject(with: try! JSONEncoder().encode(package), options: []))
+    _ = cloudant.findAll()
+        .then(packageManager.updatePackagesInChunks(packages:))
+        .done({ packages in
+            print(packages.count, "packages updated")
         })
         .catch { err in
             print(err)
@@ -30,7 +28,23 @@ func main () {
         }
         .finally {
             exit(0)
-        }
+    }
+
+    
+//    let _ = cloudant.find(repository: "onevcat/Rainbow")
+//        .then { (document) in
+//            return packageManager.createOrUpdatePackage(repositoryName: "onevcat/Rainbow", existingPackage: document)
+//        }
+//        .done({ package in
+//            print(try! JSONSerialization.jsonObject(with: try! JSONEncoder().encode(package), options: []))
+//        })
+//        .catch { err in
+//            print(err)
+//            exit(1)
+//        }
+//        .finally {
+//            exit(0)
+//        }
     RunLoop.main.run()
 }
 

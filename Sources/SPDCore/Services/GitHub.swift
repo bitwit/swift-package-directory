@@ -28,7 +28,6 @@ public class GitHub {
 
         return perform(request: req, transformingResponseTo: Package.self)
             .map({ (package) -> Package in
-                print(repoUrlString,package)
                 guard package.full_name != nil && package.html_url != nil else {
                     throw SPDError.fatal("Package does not exist")
                 }
@@ -44,11 +43,16 @@ public class GitHub {
             return Promise(error: SPDError.fatal("invalid url"))
         }
         
-        let req = URLRequest(url: url)
+        var req = URLRequest(url: url)
+        let userPasswordString = "\(username):\(accessToken)"
+        let userPasswordData = userPasswordString.data(using: .utf8)
+        let base64EncodedCredential = userPasswordData!.base64EncodedString()
+        req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
+        
         return perform(request: req, transformingResponseTo: [GitTag].self)
             .map({ (tags) -> [GitTag] in
-                guard false == tags.isEmpty else {
-                    throw SPDError.fatal("Package has no tagged versions")
+                if tags.isEmpty {
+                    print("[WARNING]: Package \(name) has no tagged versions")
                 }
                 return tags
             })

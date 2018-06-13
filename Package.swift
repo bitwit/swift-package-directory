@@ -9,16 +9,21 @@ let package = Package(
         .library(name: "SPDCore", targets: ["SPDCore"])
     ],
     dependencies: [
-        .package(url: "https://github.com/mxcl/PromiseKit.git", from: "6.3.0")
+        .package(url: "https://github.com/bitwit/PromiseKit.git", from: "7.0.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
+        .package(url: "https://github.com/vapor/fluent-sqlite.git", from: "3.0.0-rc.2")
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "SPDCore",
             dependencies: ["PromiseKit"]),
         .target(
             name: "SPDCorePlayground",
             dependencies: ["SPDCore"]),
+
+        .target(name: "App", dependencies: ["FluentSQLite", "Vapor", "SPDCore"]),
+
+        .target(name: "Run", dependencies: ["App"]),
+        .testTarget(name: "AppTests", dependencies: ["App"])
     ]
 )

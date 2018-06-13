@@ -2,13 +2,13 @@ import Foundation
 import SPDCore
 import PromiseKit
 
-guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
+guard let urlString = ProcessInfo.processInfo.environment["cloudantUrl"] else {
     fatalError("no cloudantUrl provided")
 }
-guard let githubUsername = ProcessInfo().environment["githubUsername"] else {
+guard let githubUsername = ProcessInfo.processInfo.environment["githubUsername"] else {
     fatalError("no githubUsername provided")
 }
-guard let githubAccessToken = ProcessInfo().environment["githubAccessToken"] else {
+guard let githubAccessToken = ProcessInfo.processInfo.environment["githubAccessToken"] else {
     fatalError("no githubAccessToken provided")
 }
 

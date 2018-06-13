@@ -20,9 +20,7 @@ public func perform<T: Decodable>(request: URLRequest, transformingResponseTo re
             }
             
             guard let results = try? JSONDecoder().decode(T.self, from: json) else {
-                resolver.reject(SPDError.fatal("failed to decode to expected JSON response"))
-                
-                print(error)
+                resolver.reject(SPDError.fatal("failed to decode to \(String.init(describing: T.self))"))
                 print(try! JSONSerialization.jsonObject(with: data!, options: []))
                 return
             }

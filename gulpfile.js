@@ -10,8 +10,8 @@ const sass = require('gulp-sass');
 const plumber = require('gulp-plumber');
 const concat = require('gulp-concat');
 
-const sourceRoot = './web/src/';
-const publicRoot = './web/public/';
+const sourceRoot = './Public_src/';
+const publicRoot = './Public/';
 
 gulp.task('copyFonts', () => {
 	return gulp.src(sourceRoot + 'fonts/**/**')
@@ -34,9 +34,13 @@ gulp.task('copyJSLibs', () => {
 });
 
 gulp.task('styles', () => {
-	return gulp.src([sourceRoot + 'scss/bootstrap.scss', sourceRoot + 'scss/style.scss'])
-		.pipe(sass().on('error', sass.logError))
-		.pipe(gulp.dest(publicRoot + 'css'))
+	return gulp.src([
+		sourceRoot + 'scss/bootstrap.scss',
+		sourceRoot + 'scss/animate.scss',
+		sourceRoot + 'scss/style.scss'
+	])
+	.pipe(sass().on('error', sass.logError))
+	.pipe(gulp.dest(publicRoot + 'css'))
 });
 
 gulp.task('js', () => {

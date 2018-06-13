@@ -48,7 +48,12 @@ public class PackageManager {
     
     public func createOrUpdatePackage(repositoryName: String, existingPackage: Package?) -> Promise<Package> {
         
-        return when(fulfilled: github.getRepoInfo(name: repositoryName), github.getRepoTags(name: repositoryName))
+        let github = self.github
+        return github.getRepoInfo(name: repositoryName)
+            .then { (package) in
+               return github.getRepoTags(name: repositoryName)
+                            .map({ (package, $0) })
+            }
             .then { package, tags -> Promise<Package> in
                 var pkg = package
                 pkg.latest_tag = tags.first?.name

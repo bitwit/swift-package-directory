@@ -4,6 +4,8 @@ build/
 /Packages
 Package.resolved
 
+production-compose.yml
+
 *.xcodeproj
 *.xcworkspace
 

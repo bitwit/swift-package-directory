@@ -1,4 +1,4 @@
-const apiBaseUrl = window.location.host + "/";
+const apiBaseUrl = window.location.host;
 const searchInput = $("#search-input");
 const performSearch = () => {
   const url = apiBaseUrl + "/search?query=";

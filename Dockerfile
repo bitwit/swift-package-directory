@@ -21,4 +21,15 @@ RUN git config --global user.email "kyle@bitwit.ca" &&\
 
 WORKDIR /vapor
 
-RUN ["vapor", "--help"]
+COPY . .
+
+#COPY ./Public .
+#COPY ./Sources .
+#COPY ./Tests .
+#COPY ./Package.swift .
+#COPY ./Package.resolved .
+#COPY ./.build .
+
+RUN swift build --product Run
+
+CMD ["sh", "-c", "swift run Run --hostname 0.0.0.0 --port $PORT"]

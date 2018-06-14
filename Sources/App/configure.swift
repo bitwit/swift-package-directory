@@ -6,6 +6,12 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     
     // Make sure promisekit is off of main thread at all times
     PromiseKit.conf.Q = (map: DispatchQueue.global(), return: DispatchQueue.global())
+    
+    if let port = Environment.get("PORT")
+        , let portNum = Int(port) {
+        let serverConfig = NIOServerConfig.default(hostname: "0.0.0.0", port: portNum)
+        services.register(serverConfig)
+    }
 
     /// Register routes to the router
     let router = EngineRouter.default()

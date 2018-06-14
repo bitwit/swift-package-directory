@@ -2,7 +2,7 @@ version: '3'
 services:
   web:
     build: .
-    command: swift run Run --hostname 0.0.0.0 --port 3000 #vapor run --exec=Run
+    #command: swift run Run --hostname 0.0.0.0 --port 3000 #vapor run --exec=Run
     volumes:
       - .:/vapor
     ports:

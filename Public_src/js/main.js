@@ -1,4 +1,4 @@
-const apiBaseUrl = window.location.protocol + "//" + window.location.host;
+const apiBaseUrl = "https://api.swiftpackage.directory";
 const searchInput = $("#search-input");
 const performSearch = () => {
   const url = apiBaseUrl + "/search?query=";

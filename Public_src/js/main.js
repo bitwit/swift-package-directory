@@ -9,9 +9,8 @@ var vm = new Vue({
   },
   created: function () {
     console.log('created view instance', this);
-  },
-  mounted: function () {
-    console.log('view mounted');
+    this.searchQuery = "s";
+    this.performSearch();
   },
   methods: {
     performSearch: function (e) {
@@ -21,7 +20,11 @@ var vm = new Vue({
       }
       const url = `${this.apiBaseUrl}/search?query=${this.searchQuery}`;
       this.$http.get(url).then(response => {
-        this.searchResults = response.body.packages;
+        const pkgs = response.body.packages;
+        pkgs.forEach(element => {
+          appendPackageDependencyString(element);
+        });
+        this.searchResults = pkgs;
       }, error => {
         console.log(error);
       });
@@ -30,12 +33,22 @@ var vm = new Vue({
       const url = `${this.apiBaseUrl}/add`;
       this.$http.put(url, { repository: this.addRepositoryName })
       .then(response => {
-        this.searchResults = [response.body.package]
+        const pkg = response.body.package
+        appendPackageDependencyString(pkg)
+        this.searchResults = [pkg]
       }, error => {
         console.log(error);
         this.error = "Package not found";
         this.searchResults = []
       })
+    },
+    copyPackageDependencyString: function (pkg, event) {
+      event.target.nextSibling.select();
+      document.execCommand('copy');
     }
   }
 });
+
+function appendPackageDependencyString(pkg) {
+  pkg.dependency_string = `.package(url: "https://github.com/${pkg.full_name}.git", from: "${pkg.latest_tag}")`;
+}

@@ -1083,6 +1083,13 @@ kyle changes
 
 #results-list {
   font-size: 20px;
+
+  .list-group-item {
+	  border-top: 0;
+  }
+  h3 {
+  	font-family: "Raleway", arial, sans-serif;
+  }
 }
   
 #results-list strong {
@@ -1097,17 +1104,37 @@ kyle changes
   text-decoration: underline;
 }
 
-pre.dependency {
-	margin: 0;
-	padding: 0;
-	font-size: 14px;
-	&:hover {
-		cursor: text;
-	}
-	.keyword {
-		color: cornflowerblue;
-	}
-	.string {
-		color: red;
-	}
+.meta span.value {
+	display: inline-block;
+	margin-left: 5px;
 }
+
+button.copy {
+	display: block;
+	float: left;
+	width: 35px;
+	height: 35px;
+	padding: 0;
+}
+
+input.dependency {
+	border-radius: 0;
+	font-size: 14px;
+	font-family: monospace;
+	width: calc(100% - 39px);
+}
+
+// pre.dependency {
+// 	margin: 0;
+// 	padding: 0;
+// 	font-size: 14px;
+// 	&:hover {
+// 		cursor: text;
+// 	}
+// 	.keyword {
+// 		color: cornflowerblue;
+// 	}
+// 	.string {
+// 		color: red;
+// 	}
+// }

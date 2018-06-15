@@ -1,0 +1,33 @@
+extends ./layout.pug
+
+block content
+  section.site-hero.overlay
+    .container
+      .row.align-items-center.site-hero-inner.justify-content-center
+        .col-md-8.text-center
+          .mb-5
+            h1 Find Swift Packages
+            p Discover libraries that support Swift Package Manager
+          form#search-form.form-inline(v-on:submit.prevent="performSearch")
+            input#search-input.form-control.form-control-block.search-input(type='text', v-model="searchQuery", placeholder='Package name, keywords or github username')
+            button#search-submit.btn.btn-primary(type='submit') Search
+  // END section
+  section
+    #results.container
+      ul#results-list.list-group-flush
+        li.list-group-item(v-if="searchResults != null && searchResults.length === 0")
+          strong No Results Found
+        li.list-group-item(v-for="result in searchResults")
+          a(target="_blank", v-bind:href="result.html_url")
+            span 
+              strong {{ result.full_name }}
+            | - {{ result.description }}
+          div.card
+            pre.dependency .
+              span.keyword package
+              | (url:
+              span.string "https://github.com/{{result.full_name}}.git"
+              | , from:
+              span.string "tag"
+              | )
+      

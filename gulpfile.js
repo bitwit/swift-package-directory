@@ -9,6 +9,7 @@ const notify = require('gulp-notify');
 const sass = require('gulp-sass');
 const plumber = require('gulp-plumber');
 const concat = require('gulp-concat');
+const pug = require('gulp-pug');
 
 const sourceRoot = './Public_src/';
 const publicRoot = './Public/';
@@ -23,14 +24,16 @@ gulp.task('copyImages', () => {
 		.pipe(gulp.dest(publicRoot + 'images'))
 });
 
-gulp.task('copyHTML', () => {
-	return gulp.src(sourceRoot + '**.html')
-		.pipe(gulp.dest(publicRoot))
-});
-
 gulp.task('copyJSLibs', () => {
 	return gulp.src([sourceRoot + 'js/**.js', '!' + sourceRoot + 'js/main.js'])
 		.pipe(gulp.dest(publicRoot + 'js'))
+});
+
+gulp.task('html', () => {
+	return gulp.src(sourceRoot + '/views/**.pug')
+		.pipe(plumber())
+		.pipe(pug())
+		.pipe(gulp.dest(publicRoot))
 });
 
 gulp.task('styles', () => {
@@ -69,12 +72,12 @@ gulp.task('bs', () => {
 });
 
 gulp.task('default', ['bs', 'build'], () => {
-	gulp.watch(sourceRoot + '**.html',['copyHTML']);
+	gulp.watch(sourceRoot + 'views/**.pug',['html']);
 	gulp.watch(sourceRoot + 'js/**/*.js',['js']);
-	gulp.watch(sourceRoot + 'css/**/*.scss',['styles']);
+	gulp.watch(sourceRoot + 'scss/**/*.scss',['styles']);
 
 	gulp.watch(publicRoot + 'css/style.css',reload);
 	gulp.watch(publicRoot + '*.html',reload);
 });
 
-gulp.task('build', ['js','styles', 'copyFonts', 'copyImages', 'copyHTML', 'copyJSLibs']);
+gulp.task('build', ['html', 'js', 'styles', 'copyFonts', 'copyImages', 'copyJSLibs']);

@@ -1,0 +1,67 @@
+doctype html
+html(lang='en')
+  head
+    title Swift Package Directory
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    link(href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900|Raleway', rel='stylesheet')
+    link(rel='stylesheet', href='css/bootstrap.css')
+    link(rel='stylesheet', href='css/animate.css')
+    link(rel='stylesheet', href='fonts/ionicons/css/ionicons.min.css')
+    link(rel='stylesheet', href='fonts/fontawesome/css/font-awesome.min.css')
+    // Theme Style
+    link(rel='stylesheet', href='css/style.css')
+  body
+    header(role='banner')
+      nav.navbar.navbar-expand-md.navbar-dark.bg-light
+        .container
+          a.navbar-brand(href='index.html') Swift Package Directory
+          a.navbar-brand.small(href='index.html') Swift Pkg Dir
+          button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarsExample05', aria-controls='navbarsExample05', aria-expanded='false', aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+          #navbarsExample05.collapse.navbar-collapse.navbar-light
+            ul.navbar-nav.ml-auto.pl-lg-5.pl-0
+              li.nav-item
+                a.nav-link(href='index.html') Home
+              li.nav-item
+                a.nav-link(href='add.html') Add Package
+    // END header
+    div#app
+      block content
+
+    footer.site-footer
+      .container
+        .row.mb-5
+          .col-md-4
+            h3.mb-4 About
+            p.mb-4
+              | This site is an experiment currently running
+              br
+              |  via Netlify & IBM Cloud's Serverless
+            p.mb-4
+              | This template was derived from 
+              br
+              a(target='_blank', href='https://colorlib.com/wp/template/listed/')
+                strong Listed
+              | ;
+              |                   made with 
+              i.fa.fa-heart-o(aria-hidden='true')
+              |  by 
+              a(target='_blank', href='https://colorlib.com') Colorlib
+          .col-md-4
+            h3.mb-4 Links
+            ul.list-unstyled
+              li
+                a(href='#') Home
+              li
+                a(href='#') Add Package
+          .col-md-4
+            h3.mb-4 Contact
+            p
+              a.p-2(target='_blank', href='https://github.com/bitwit/swift-package-directory')
+                span.fa.fa-github
+              a.p-2(target='_blank', href='https://twitter.com/kylnew')
+                span.fa.fa-twitter
+    script(src='js/vue.min.js')
+    script(src='js/vue-resource.min.js')
+    script(src='js/main.js')

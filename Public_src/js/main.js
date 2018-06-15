@@ -1,62 +1,41 @@
-const apiBaseUrl = "https://api.swiftpackage.directory";
-const searchInput = $("#search-input");
-const performSearch = () => {
-  const url = apiBaseUrl + "/search?query=";
-  const searchTerm = searchInput.val();
-
-  if (searchTerm.length < 1) {
-    $("#results").html('');
-  }
-  $.ajax(url + searchTerm, {
-    success: (data) => {
-
-      $("#results").html('<ul id="results-list" class="list-group-flush"></ul>');
-      const list = $("#results-list");
-
-      if (data.packages.length == 0) {
-        list.append(`<li class="list-group-item"><strong>No Results Found</strong></li>`)
-      } else {
-        console.log(data.packages);
-        data.packages.forEach((doc) => {
-          list.append(`<li class="list-group-item"><a target="_blank" href="${doc.html_url}"><strong>${doc.full_name}</strong> - ${doc.description}</a></li>`)
-        });
+var vm = new Vue({
+  el: '#app',
+  data: {
+    apiBaseUrl: "https://api.swiftpackage.directory",
+    searchQuery: "",
+    searchResults: null,
+    addRepositoryName: "",
+    error: null
+  },
+  created: function () {
+    console.log('created view instance', this);
+  },
+  mounted: function () {
+    console.log('view mounted');
+  },
+  methods: {
+    performSearch: function (e) {
+      if (this.searchQuery.length === 0) {
+        this.searchResults = [];
+        return;
       }
-    }
-  });
-}
-
-$('#search-form').submit((e) => {
-  e.preventDefault();
-  performSearch();
-});
-
-$('#add-form').submit((e) => {
-  e.preventDefault();
-  let packageName = $("#add-input").val();
-  const url = apiBaseUrl + "/add";
-  $.ajax(url, {
-    method: "PUT",
-    contentType: "application/json",
-    data: JSON.stringify({ repository: packageName }),
-    dataType: "json",
-    success: (data) => {
-      console.log(data);
-
-      $("#results").html('<h3 class="text-center mt-5">Added!</h3><ul id="results-list" class="list-group-flush"></ul>');
-      const list = $("#results-list");
-
-      list.append(`<li class="list-group-item"><a target="_blank" href="${data.package.html_url}">
-            <strong>${data.package.full_name}</strong>
-             - ${data.package.description}</a></li>`)
+      const url = `${this.apiBaseUrl}/search?query=${this.searchQuery}`;
+      this.$http.get(url).then(response => {
+        this.searchResults = response.body.packages;
+      }, error => {
+        console.log(error);
+      });
     },
-    error: (jqXHR, textStatus, errorThrown) => {
-       const reason = jqXHR.responseJSON.reason
-       $("#results").html('<h3 class="text-center mt-5">Error!</h3><ul id="results-list" class="list-group-flush"></ul>');
-       if (reason) {
-        const list = $("#results-list");
-
-        list.append(`<li class="list-group-item">${reason}</li>`)
-       }
+    addPackage: function () {
+      const url = `${this.apiBaseUrl}/add`;
+      this.$http.put(url, { repository: this.addRepositoryName })
+      .then(response => {
+        this.searchResults = [response.body.package]
+      }, error => {
+        console.log(error);
+        this.error = "Package not found";
+        this.searchResults = []
+      })
     }
-  });
+  }
 });

@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "add-swift-package",
+    name: "add-package",
     dependencies: [
         .package(url: "../../", from: "0.0.8")
     ],

@@ -67,4 +67,4 @@ mkdir -p /owexec/$OUTPUT_DIR
 zip \"/owexec/$OUTPUT_DIR/$1.zip\" .build/release/Action
 "
 
-bx wsk action update swift-package-directory/$1 build/$1.zip --kind swift:4.1
+bx wsk action update $1 build/$1.zip --kind swift:4.1

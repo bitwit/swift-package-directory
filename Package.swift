@@ -9,7 +9,7 @@ let package = Package(
         .library(name: "SPDCore", targets: ["SPDCore"])
     ],
     dependencies: [
-        .package(url: "https://github.com/bitwit/PromiseKit.git", from: "7.0.0"),
+        .package(url: "https://github.com/mxcl/PromiseKit.git", from: "6.3.1"),
         .package(url: "https://github.com/vapor/vapor.git", from: "3.0.0"),
         .package(url: "https://github.com/vapor/fluent-sqlite.git", from: "3.0.0-rc.2")
     ],

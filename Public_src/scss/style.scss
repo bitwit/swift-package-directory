@@ -3,7 +3,6 @@
 @import "custom";
 @import "mixins";
 
-
 body {
 	background: $white;
 	font-family: $font-family-sans-serif;
@@ -1082,17 +1081,33 @@ textarea.form-control {
 kyle changes 
 */
 
-  #results-list {
-	font-size: 20px;
-  }
+#results-list {
+  font-size: 20px;
+}
   
-  #results-list strong {
-	color: #FF4235;
-  }
-  #results-list a {
-	color: #999999;
-  }
-  #results-list a:hover {
-	text-decoration: underline;
-  }
-  /* END */
+#results-list strong {
+  color: #FF4235;
+}
+
+#results-list a {
+  color: #999999;
+}
+
+#results-list a:hover {
+  text-decoration: underline;
+}
+
+pre.dependency {
+	margin: 0;
+	padding: 0;
+	font-size: 14px;
+	&:hover {
+		cursor: text;
+	}
+	.keyword {
+		color: cornflowerblue;
+	}
+	.string {
+		color: red;
+	}
+}

@@ -790,4 +790,13 @@ kyle changes
 #results-list a:hover {
   text-decoration: underline; }
 
-/* END */
+pre.dependency {
+  margin: 0;
+  padding: 0;
+  font-size: 14px; }
+  pre.dependency:hover {
+    cursor: text; }
+  pre.dependency .keyword {
+    color: cornflowerblue; }
+  pre.dependency .string {
+    color: red; }

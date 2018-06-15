@@ -785,7 +785,7 @@ kyle changes
   #results-list h3 {
     font-family: "Raleway", arial, sans-serif; }
 
-#results-list strong {
+#results-list h4, strong {
   color: #FF4235; }
 
 #results-list a {
@@ -806,6 +806,8 @@ button.copy {
   padding: 0; }
 
 input.dependency {
+  display: block;
+  float: left;
   border-radius: 0;
   font-size: 14px;
   font-family: monospace;

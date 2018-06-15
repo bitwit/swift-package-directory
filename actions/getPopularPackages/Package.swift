@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "get-popular-packages",
     dependencies: [
-        .package(url: "../../", from: "0.0.9")
+        .package(url: "../../", from: "0.0.10")
     ],
     targets: [
         .target(

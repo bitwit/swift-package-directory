@@ -1092,7 +1092,7 @@ kyle changes
   }
 }
   
-#results-list strong {
+#results-list h4, strong {
   color: #FF4235;
 }
 
@@ -1118,6 +1118,8 @@ button.copy {
 }
 
 input.dependency {
+	display: block;
+	float: left;
 	border-radius: 0;
 	font-size: 14px;
 	font-family: monospace;

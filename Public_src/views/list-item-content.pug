@@ -1,0 +1,25 @@
+div.row.mb-3
+  div.col-md-9.mb-2
+    h3
+      a(target="_blank", v-bind:href="result.html_url")
+        span 
+          strong {{ result.full_name }}
+    p {{ result.description }}
+  div.col-md-3.meta.mb-2
+    div.row
+      div.col-6.col-lg-12
+        span.stargazers
+          i.icon.ion-ios-star
+          span.value
+            a.link(target="_blank", v-bind:href="result.html_url")  {{ result.stargazers_count }}
+      div.col-6.col-lg-12
+        span.tag
+          i.icon.ion-ios-pricetag
+          span.value(v-if="result.latest_tag != null")
+            a.link(target="_blank", v-bind:href="result.html_url + '/releases'") {{ result.latest_tag }}
+          span.value(v-if="result.latest_tag == null")
+            | No releases
+  div.col-md-9.mb-2(v-if="result.latest_tag != null")
+    input.form-control.dependency(readonly, v-model="result.dependency_string")
+    button.btn.btn-primary.copy(v-on:click="copyPackageDependencyString(result, $event)")
+      i.icon.ion-clipboard

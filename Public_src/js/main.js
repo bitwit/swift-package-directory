@@ -3,28 +3,42 @@ var vm = new Vue({
   data: {
     apiBaseUrl: "https://api.swiftpackage.directory",
     searchQuery: "",
+    popularResults: null,
     searchResults: null,
     addRepositoryName: "",
     error: null
   },
-  created: function () {},
+  created: function () {
+    this.getPopular();
+  },
   methods: {
-    performSearch: function (e) {
+    getPopular: function () {
+      const url = `${this.apiBaseUrl}/popular`;
+      this.$http.get(url).then(response => {
+        this.popularResults = response.body.packages.map(element => {
+          appendPackageDependencyString(element);
+          return element;
+        });
+        console.log(this.popularResults);
+      }, error => {
+        console.log(error);
+      });
+    },
+    performSearch: _.debounce(function (e) {
       if (this.searchQuery.length === 0) {
         this.searchResults = [];
         return;
       }
       const url = `${this.apiBaseUrl}/search?query=${this.searchQuery}`;
       this.$http.get(url).then(response => {
-        const pkgs = response.body.packages;
-        pkgs.forEach(element => {
+        this.searchResults = response.body.packages.map(element => {
           appendPackageDependencyString(element);
+          return element;
         });
-        this.searchResults = pkgs;
       }, error => {
         console.log(error);
       });
-    },
+    }, 200),
     addPackage: function () {
       const url = `${this.apiBaseUrl}/add`;
       this.$http.put(url, { repository: this.addRepositoryName })
@@ -39,7 +53,7 @@ var vm = new Vue({
       })
     },
     copyPackageDependencyString: function (pkg, event) {
-      event.target.nextSibling.select();
+      event.target.previousSibling.select();
       document.execCommand('copy');
     }
   }

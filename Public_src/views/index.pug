@@ -9,9 +9,11 @@ block content
             h1 Find Swift Packages
             p Discover libraries that support Swift Package Manager
           form#search-form.form-inline(v-on:submit.prevent="performSearch")
-            input#search-input.form-control.form-control-block.search-input(type='text', v-model="searchQuery", placeholder='Package name, keywords or github username')
+            input#search-input.form-control.form-control-block.search-input(type='text', v-model="searchQuery", v-on:input="performSearch" placeholder='Package name, keywords or github username')
             button#search-submit.btn.btn-primary(type='submit') Search
-  // END section
-  section
+  section.mb-5
     #results.container
       include package-list.pug
+  section.mb-5
+    #popular.container
+      include popular-list.pug

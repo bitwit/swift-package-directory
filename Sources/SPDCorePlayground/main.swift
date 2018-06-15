@@ -11,16 +11,17 @@ guard let githubUsername = ProcessInfo.processInfo.environment["githubUsername"]
 guard let githubAccessToken = ProcessInfo.processInfo.environment["githubAccessToken"] else {
     fatalError("no githubAccessToken provided")
 }
+guard let popularIndex = ProcessInfo.processInfo.environment["popularIndex"] else {
+    fatalError("no searchIndex")
+}
 
 func main () {
     let cloudant = Cloudant(baseUrl: urlString)
     let github = GitHub(username: githubUsername, accessToken: githubAccessToken)
     let packageManager = PackageManager(cloudant: cloudant, github: github)
-    
-    _ = cloudant.findAll()
-        .then(packageManager.updatePackagesInChunks(packages:))
+    _ = cloudant.getMostPopular(popularIndex: popularIndex)
         .done({ packages in
-            print(packages.count, "packages updated")
+            print(packages.map { $0.full_name! + " - \($0.stargazers_count!)\n" } .joined())
         })
         .catch { err in
             print(err)

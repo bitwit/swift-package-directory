@@ -11,6 +11,13 @@ struct FindQuery: Codable {
     let use_index: String
 }
 
+struct PopularSearch: Codable {
+    let limit: Int = 10
+    let sort = [["stargazers_count": "desc"]]
+    let selector = ["stargazers_count": ["$gte": 100]]
+    let use_index: String
+}
+
 public struct FindResult: Codable {
     let docs: [Package]
 }
@@ -50,6 +57,26 @@ public class Cloudant {
         return perform(request: req, transformingResponseTo: FindResult.self)
             .map({ (results) -> Package? in
                 return results.docs.first
+            })
+    }
+    
+    public func getMostPopular(popularIndex: String) -> Promise<[Package]> {
+        
+        guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
+            return Promise(error:  SPDError.fatal("invalid url"))
+        }
+        
+        let query = PopularSearch(use_index: popularIndex)
+        
+        var req = URLRequest(url: url)
+        let reqData = try! JSONEncoder().encode(query)
+        req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = reqData
+        req.httpMethod = "POST"
+        
+        return perform(request: req, transformingResponseTo: FindResult.self)
+            .map({ (results) -> [Package] in
+                return results.docs
             })
     }
     

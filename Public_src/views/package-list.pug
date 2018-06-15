@@ -1,0 +1,28 @@
+ul#results-list.list-group-flush.row
+  li.list-group-item.col-12(v-if="searchResults != null && searchResults.length === 0")
+    strong No Results Found
+  li.container.list-group-item.col-12.mt-4(v-for="result in searchResults")
+    div.row.mb-3
+      div.col-md-9.mb-2
+        h3
+          a(target="_blank", v-bind:href="result.html_url")
+            span 
+              strong {{ result.full_name }}
+        p {{ result.description }}
+      div.col-md-3.meta.mb-2
+        div.row
+          div.col-6.col-lg-12
+            span.stargazers
+              i.icon.ion-ios-star
+              span.value {{ result.stargazers_count }}
+          div.col-6.col-lg-12
+            span.tag
+              i.icon.ion-ios-pricetag
+              span.value(v-if="result.latest_tag != null")
+                a.link(target="_blank", v-bind:href="result.html_url + '/releases'") {{ result.latest_tag }}
+              span.value(v-if="result.latest_tag == null")
+                | No releases
+      div.col-md-9.mb-2(v-if="result.latest_tag != null")
+        button.btn.btn-primary.copy(v-on:click="copyPackageDependencyString(result, $event)")
+          i.icon.ion-clipboard
+        input(readonly, v-model="result.dependency_string").form-control.dependency

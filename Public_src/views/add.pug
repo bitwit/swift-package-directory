@@ -11,13 +11,8 @@ block content
           form#add-form.form-inline(v-on:submit.prevent="addPackage")
             input#add-input.form-control.form-control-block.search-input(type='text', v-model="addRepositoryName", placeholder="owner/reponame i.e. 'ReactiveX/RxSwift'")
             button#add-submit.btn.btn-primary(type='submit') Add
-  // END section
   section
     #results.container
+      h3.text-center.mt-5(v-if="searchResults && searchResults.length == 1") Added!
       h3.text-center.mt-5(v-if="error != null") Error!
-      ul#results-list.list-group-flush
-        li.list-group-item(v-for="result in searchResults")
-          a(target="_blank", v-bind:href="result.html_url")
-            span 
-              strong {{ result.full_name }}
-            | - {{ result.description }}
+      include package-list.pug

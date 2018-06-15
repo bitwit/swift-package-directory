@@ -7,11 +7,7 @@ var vm = new Vue({
     addRepositoryName: "",
     error: null
   },
-  created: function () {
-    console.log('created view instance', this);
-    this.searchQuery = "s";
-    this.performSearch();
-  },
+  created: function () {},
   methods: {
     performSearch: function (e) {
       if (this.searchQuery.length === 0) {

@@ -1094,6 +1094,12 @@ kyle changes
   text-decoration: underline;
 }
 
+li.topic {
+	font-size: 13px;
+	padding: 0 6px;
+	cursor: pointer;
+}
+
 .meta span.value {
 	display: inline-block;
 	margin-left: 5px;
@@ -1115,18 +1121,3 @@ input.dependency {
 	font-family: monospace;
 	width: calc(100% - 39px);
 }
-
-// pre.dependency {
-// 	margin: 0;
-// 	padding: 0;
-// 	font-size: 14px;
-// 	&:hover {
-// 		cursor: text;
-// 	}
-// 	.keyword {
-// 		color: cornflowerblue;
-// 	}
-// 	.string {
-// 		color: red;
-// 	}
-// }

@@ -4,7 +4,10 @@ div.row.mb-3
       a(target="_blank", v-bind:href="result.html_url")
         span 
           strong {{ result.full_name }}
-    p {{ result.description }}
+    span.description {{ result.description }}
+    ul.list-inline
+      li.topic.list-inline-item.list-group-item-info(v-for="topic in firstSixTopics(result)", v-on:click="searchTopic(topic)") {{ topic }}
+      li.topic.list-inline-item.list-group-item-info(v-if="result.topics.length > 6") + {{ result.topics.length - 6 }} more
   div.col-md-3.meta.mb-2
     div.row
       div.col-6.col-lg-12

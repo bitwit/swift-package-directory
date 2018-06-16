@@ -20,6 +20,13 @@ var vm = new Vue({
     error: null
   },
   created: function () {
+    let uri = window.location.search.substring(1); 
+    let params = new URLSearchParams(uri);
+    let searchQuery = params.get("query");
+    if(searchQuery) {
+      this.searchQuery = searchQuery;
+      this.performSearch();
+    }
     this.getPopular();
   },
   methods: {
@@ -66,6 +73,15 @@ var vm = new Vue({
     copyPackageDependencyString: function (pkg, event) {
       event.target.previousSibling.select();
       document.execCommand('copy');
+    },
+    searchTopic: function (topic) {
+      window.location.href = `/?query=${topic}`
+    },
+    firstSixTopics: function (pkg) {
+      if (pkg.topics.length < 6) {
+        return pkg.topics;
+      }
+      return pkg.topics.slice(0, 6);
     }
   }
 });

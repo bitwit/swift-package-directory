@@ -6,6 +6,7 @@ struct Input: Codable {
     let cloudantUrl: String
     let query: String
     let searchIndex: String
+    let skip: Int?
 }
 
 struct Output: Codable {
@@ -14,7 +15,12 @@ struct Output: Codable {
 
 func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void {
     let cloudant = Cloudant(baseUrl: param.cloudantUrl)
-    _ = cloudant.search(term: param.query, searchIndex: param.searchIndex)
+    
+    var sq = SearchQuery()
+    sq.selector = ["$text": param.query]
+    sq.use_index = param.searchIndex
+    sq.skip = param.skip ?? 0
+    _ = cloudant.search(query: sq)
         .done({ packages in
             print(packages)
             print(packages.count, "packages found")
@@ -37,7 +43,7 @@ guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
 guard let searchIndex = ProcessInfo().environment["searchIndex"] else {
     fatalError("no searchIndex provided")
 }
-main(param: Input(cloudantUrl: urlString, query: "s", searchIndex: searchIndex)) { output, error in
+main(param: Input(cloudantUrl: urlString, query: "s", searchIndex: searchIndex, skip: 0)) { output, error in
     print(output, error)
     exit(error == nil ? 0 : 1)
 }

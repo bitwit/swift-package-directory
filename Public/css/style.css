@@ -110,12 +110,7 @@ header {
     .site-hero.overlay h1, .site-hero.overlay p {
       color: #fff; }
   .site-hero .site-hero-inner {
-    min-height: 400px;
-    height: 60vh; }
-
-.site-hero-innerpage, .site-hero-innerpage .site-hero-inner {
-  min-height: 550px;
-  height: 50vh; }
+    height: 330px; }
 
 .site-section {
   padding: 7em 0; }

@@ -9,22 +9,27 @@ html(lang='en')
     link(rel='stylesheet', href='css/animate.css')
     link(rel='stylesheet', href='fonts/ionicons/css/ionicons.min.css')
     link(rel='stylesheet', href='fonts/fontawesome/css/font-awesome.min.css')
+    // Twitter card
+    meta(name="twitter:card", content="summary")
+    meta(name="twitter:site", content="@kylnew")
+    meta(name="twitter:title", content="Swift Package Directory")
     // Theme Style
     link(rel='stylesheet', href='css/style.css')
+
   body
     header(role='banner')
-      nav.navbar.navbar-expand-md.navbar-dark.bg-light
+      nav#nav-app.navbar.navbar-expand-md.navbar-dark.bg-light
         .container
           a.navbar-brand(href='index.html') Swift Package Directory
           a.navbar-brand.small(href='index.html') Swift Pkg Dir
-          button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarsExample05', aria-controls='navbarsExample05', aria-expanded='false', aria-label='Toggle navigation')
+          button.navbar-toggler(type='button', v-on:click="toggle()")
             span.navbar-toggler-icon
-          #navbarsExample05.collapse.navbar-collapse.navbar-light
+          div(v-bind:class="{ collapse: !isExpanded }").navbar-collapse.navbar-light
             ul.navbar-nav.ml-auto.pl-lg-5.pl-0
               li.nav-item
-                a.nav-link(href='index.html') Home
+                a.nav-link(href='/') Search
               li.nav-item
-                a.nav-link(href='add.html') Add Package
+                a.nav-link(href='/add.html') Add Package
 
     div#app
       block content
@@ -51,9 +56,9 @@ html(lang='en')
             h3.mb-4 Links
             ul.list-unstyled
               li
-                a(href='#') Home
+                a(href='/') Search
               li
-                a(href='#') Add Package
+                a(href='/add.html') Add Package
           .col-md-4
             h3.mb-4 Contact
             p

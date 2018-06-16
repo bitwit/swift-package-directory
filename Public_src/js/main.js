@@ -1,3 +1,14 @@
+var navApp = new Vue({
+  el: '#nav-app',
+  data: {
+    isExpanded: false
+  },
+  methods: {
+    toggle: function () {
+      this.isExpanded = !this.isExpanded;
+    }
+  }
+})
 var vm = new Vue({
   el: '#app',
   data: {

@@ -135,8 +135,6 @@ header {
 .site-hero {
 	background: linear-gradient(#FF4235, #FAB64D);
 	background-position: center center;
-	// min-height: 750px;
-	// height: 100vh;
 	
 	> .container {
 		position: relative;
@@ -156,15 +154,7 @@ header {
 		}
 	}
 	.site-hero-inner {
-		min-height: 400px;
-		height: 60vh;
-	}
-}
-.site-hero-innerpage {
-
-	&, .site-hero-inner {
-		min-height: 550px;
-		height: 50vh;
+		height: 330px;
 	}
 }
 .site-section {

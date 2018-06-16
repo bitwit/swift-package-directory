@@ -2,14 +2,14 @@ extends ./layout.pug
 
 block content
   section.site-hero.overlay
-    .container
-      .row.align-items-center.site-hero-inner.justify-content-center
-        .col-md-8.text-center
-          .mb-5
+    div.container
+      div.row.align-items-center.site-hero-inner.justify-content-center
+        div.col-md-8.text-center
+          div.mb-1.mb-md-5
             h1 Find Swift Packages
-            p Discover libraries that support Swift Package Manager
+            p Discover libraries that support Swift&nbsp;Package&nbsp;Manager
           form#search-form.form-inline(v-on:submit.prevent="performSearch")
-            input#search-input.form-control.form-control-block.search-input(type='text', v-model="searchQuery", v-on:input="performSearch" placeholder='Package name, keywords or github username')
+            input#search-input.form-control.form-control-block.search-input(type='text', v-model="searchQuery", v-on:input="performSearch" placeholder='Package name, keywords or github username', autocomplete="off")
             button#search-submit.btn.btn-primary(type='submit') Search
   section.mb-5
     #results.container

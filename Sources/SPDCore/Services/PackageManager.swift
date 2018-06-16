@@ -51,12 +51,13 @@ public class PackageManager {
         let github = self.github
         return github.getRepoInfo(name: repositoryName)
             .then { (package) in
-               return github.getRepoTags(name: repositoryName)
-                            .map({ (package, $0) })
+                return when(fulfilled: github.getRepoTags(name: repositoryName), github.getRepoTopics(name: repositoryName))
+                            .map({ (package, $0, $1) })
             }
-            .then { package, tags -> Promise<Package> in
+            .then { package, tags, topics -> Promise<Package> in
                 var pkg = package
                 pkg.latest_tag = tags.first?.name
+                pkg.topics = topics
                 if let doc = existingPackage {
                     print("[Updating] ", pkg.full_name!)
                     pkg.applyIdentification(from: doc)

@@ -6,11 +6,6 @@ public struct FindAllResult: Codable {
     let rows: [DocumentContainer]
 }
 
-struct FindQuery: Codable {
-    let selector: [String: String]
-    let use_index: String
-}
-
 struct PopularSearch: Codable {
     let limit: Int = 10
     let sort = [["stargazers_count": "desc"]]
@@ -80,28 +75,20 @@ public class Cloudant {
             })
     }
     
-    public func search(term: String, searchIndex: String) -> Promise<[Package]> {
-        
-        guard false == term.isEmpty else {
-            return Promise(error: SPDError.fatal("query string must not be empty"))
-        }
-    
+    public func search(query: SearchQuery) -> Promise<[Package]> {
+
         guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
             return Promise(error:  SPDError.fatal("invalid url"))
         }
     
-        let query = FindQuery(
-            selector: ["$text": term],
-            use_index: searchIndex
-        )
-    
+
         var req = URLRequest(url: url)
         let reqData = try! JSONEncoder().encode(query)
         req.addValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = reqData
         req.httpMethod = "POST"
         
-        return perform(request: req, transformingResponseTo: FindResult.self)
+        return perform(request: req, transformingResponseTo: FindResult.self, debug: true)
             .map({ (results) -> [Package] in
                 return results.docs
             })
@@ -138,6 +125,7 @@ public class Cloudant {
         var finalPackage = package
         finalPackage.buildKeywords()
         finalPackage.html_url = finalPackage.html_url?.lowercased()
+        finalPackage.last_package_update = Date()
         
         var req = URLRequest(url: url)
         let reqData = try! JSONEncoder().encode(finalPackage)
@@ -146,6 +134,11 @@ public class Cloudant {
         req.httpMethod = (package._id?.isEmpty == false) ? "PUT" : "POST"
         
         return perform(request: req, transformingResponseTo: WrittenDocumentResult.self)
+            .tap({ (result) in
+                if case let .rejected(e) = result {
+                   print(package.full_name, package._rev)
+                }
+            })
             .map({ _ -> Package in
                 return finalPackage
             })

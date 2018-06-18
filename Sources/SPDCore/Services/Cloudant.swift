@@ -88,6 +88,8 @@ public class Cloudant {
         req.httpBody = reqData
         req.httpMethod = "POST"
         
+        print(req.cURL)
+        
         return perform(request: req, transformingResponseTo: FindResult.self, debug: true)
             .map({ (results) -> [Package] in
                 return results.docs

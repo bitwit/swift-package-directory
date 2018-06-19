@@ -32,8 +32,11 @@ public func routes(_ router: Router) throws {
         let findQuery = try req.query.decode(FindQuery.self)
         let promise = req.eventLoop.newPromise(PackagesContainer.self)
         let cloudant = Cloudant(baseUrl: cloudantUrl)
+        var query = SearchQuery()
+        query.selector = ["$text": findQuery.query]
+        query.use_index = searchIndex
         cloudant
-            .search(term: findQuery.query, searchIndex: searchIndex)
+            .search(query: query)
             .map { PackagesContainer(packages: $0) }
             .bind(to: promise)
         return promise.futureResult

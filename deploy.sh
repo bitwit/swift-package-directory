@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # This is copied mostly from IBM Serverless documentation
-# Currently it appears that 
-# swift executables get wrapped with a little extra to function properly
+# Currently it is required to wrap Swift code appropriately to work with OpenWhisk
 
 set -ex
 

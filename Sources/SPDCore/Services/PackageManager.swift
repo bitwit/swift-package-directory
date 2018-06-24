@@ -65,4 +65,44 @@ public class PackageManager {
                 return self.cloudant.writeToDB(package: pkg)
         }
     }
+    
+    //
+    // WIP, needs to paginate over github results
+    // TODO: paginate github results
+    public func searchAndAddNewPackages() -> Promise<[Package]> {
+        return cloudant.findAll()
+            .map { (packages) -> [String: Package] in
+                var pkgDict = [String: Package]()
+                packages.forEach({ (pkg) in
+                    guard let name = pkg.full_name else { return }
+                    pkgDict[name] = pkg
+                })
+                return pkgDict
+            }
+            .then { (pkgDict) -> Promise<[Package]> in
+               return self.github.searchForSwiftPackages(page: 1, limit: 100)
+                    .then { (packages) -> Promise<[Package]> in
+                        
+                        let packageChecks = packages.map { self.github.determineIfRepoHasPackageSwiftFile(name: $0.full_name!) }
+                        return when(fulfilled: packageChecks)
+                            .map({ (validityChecks) -> [Package] in
+                                return packages.enumerated().reduce([], { (acc, next) -> [Package] in
+                                    let isValidPkg = validityChecks[next.offset]
+                                    return (isValidPkg) ? acc + [next.element] : acc
+                                })
+                            })
+                    }
+                    .map({ (packages) -> [Package] in
+                        let packagesToAdd = packages.compactMap { pkg -> Package? in
+                            guard let name = pkg.full_name else { return nil }
+                            if pkgDict[name] != nil {
+                                return nil
+                            }
+                            return pkg
+                        }
+                        return packagesToAdd
+                    })
+                    .then { self.updatePackagesInChunks(packages: $0) }
+            }
+    }
 }

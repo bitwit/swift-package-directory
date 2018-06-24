@@ -7,6 +7,17 @@ public struct GitTag: Codable {
 public struct GitTopics: Codable {
     let names: [String]
 }
+public struct GitSearchResults: Codable {
+    let items: [Package]
+    let total_count: Int
+}
+public struct GitRepoContents: Codable {
+    let tree: [GitFile]
+}
+public struct GitFile: Codable {
+    let path: String
+    let url: String?
+}
 
 public class GitHub {
     
@@ -86,5 +97,41 @@ public class GitHub {
             .recover({ (err) -> Guarantee<[String]> in
                 return Guarantee { $0([]) }
             })
+    }
+    
+    public func searchForSwiftPackages(page: Int = 1, limit: Int = 100) -> Promise<[Package]> {
+        
+        let repoUrlString = "https://api.github.com/search/repositories?"
+        let cleanString = repoUrlString + "q=package+language:swift+stars:>0&page=\(page)&per_page=\(limit)".addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        
+        guard let url = URL(string: cleanString) else {
+            return Promise(error: SPDError.fatal("invalid url \(repoUrlString)"))
+        }
+        
+        var req = URLRequest(url: url)
+        let userPasswordString = "\(username):\(accessToken)"
+        let userPasswordData = userPasswordString.data(using: .utf8)
+        let base64EncodedCredential = userPasswordData!.base64EncodedString()
+        req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
+        
+        return perform(request: req, transformingResponseTo: GitSearchResults.self)
+            .map { $0.items }
+    }
+    
+    public func determineIfRepoHasPackageSwiftFile(name: String) -> Promise<Bool> {
+        let contentsUrl = "https://api.github.com/repos/\(name)/git/trees/master"
+        
+        guard let url = URL(string: contentsUrl) else {
+            return Promise(error: SPDError.fatal("invalid url \(contentsUrl)"))
+        }
+        
+        var req = URLRequest(url: url)
+        let userPasswordString = "\(username):\(accessToken)"
+        let userPasswordData = userPasswordString.data(using: .utf8)
+        let base64EncodedCredential = userPasswordData!.base64EncodedString()
+        req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
+        
+        return perform(request: req, transformingResponseTo: GitRepoContents.self)
+            .map { $0.tree.contains(where: { $0.path == "Package.swift" }) }
     }
 }

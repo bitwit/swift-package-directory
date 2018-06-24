@@ -48,7 +48,7 @@ public class Cloudant {
         req.addValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = reqData
         req.httpMethod = "POST"
-        
+
         return perform(request: req, transformingResponseTo: FindResult.self)
             .map({ (results) -> Package? in
                 return results.docs.first

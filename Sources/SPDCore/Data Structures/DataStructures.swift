@@ -10,7 +10,8 @@ public struct SearchQuery: Codable {
     public var limit: Int = 10
     public var skip: Int = 0
     
-    public init() {}
+    public init() {
+    }
 }
 
 public struct DocumentContainer: Codable {

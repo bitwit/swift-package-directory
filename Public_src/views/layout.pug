@@ -1,23 +1,29 @@
+- var description = "Search for libraries that support Swift Package Manager.";
+- var keywords = ["swift", "package.swift", "ios", "macos", "linux", "server-side", "apple"].join(",")
+
 doctype html
-html(lang='en')
+html(lang="en")
   head
     title Swift Package Directory
-    meta(charset='utf-8')
-    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
-    link(href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900|Raleway', rel='stylesheet')
-    link(rel='stylesheet', href='css/bootstrap.css')
-    link(rel='stylesheet', href='css/animate.css')
-    link(rel='stylesheet', href='fonts/ionicons/css/ionicons.min.css')
-    link(rel='stylesheet', href='fonts/fontawesome/css/font-awesome.min.css')
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    meta(name="description", content=description)
+    meta(name="keywords", content=keywords)
+    link(href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900|Raleway", rel="stylesheet")
+    link(rel="stylesheet", href="css/bootstrap.css")
+    link(rel="stylesheet", href="css/animate.css")
+    link(rel="stylesheet", href="fonts/ionicons/css/ionicons.min.css")
+    link(rel="stylesheet", href="fonts/fontawesome/css/font-awesome.min.css")
     // Twitter card
     meta(name="twitter:card", content="summary")
     meta(name="twitter:site", content="@kylnew")
     meta(name="twitter:title", content="Swift Package Directory")
+    meta(name="twitter:description", content=description)
     // Theme Style
-    link(rel='stylesheet', href='css/style.css')
+    link(rel="stylesheet", href="css/style.css")
 
   body
-    header(role='banner')
+    header(role="banner")
       nav#nav-app.navbar.navbar-expand-md.navbar-dark.bg-light
         .container
           a.navbar-brand(href='index.html') Swift Package Directory
@@ -39,6 +45,8 @@ html(lang='en')
         .row.mb-5
           .col-md-4
             h3.mb-4 About
+            p.mb-4
+              | #{description}
             p.mb-4
               | This site is open source. Currently an experiment running on
               br

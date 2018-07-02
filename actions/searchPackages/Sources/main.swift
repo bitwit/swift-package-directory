@@ -29,6 +29,7 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
         .finally {
             exit(0)
     }
+    RunLoop.main.run()
 }
 
 #if os(macOS)
@@ -39,6 +40,5 @@ main(param: Input(cloudantUrl: urlString, query: "sl")) { output, error in
     print(output, error)
     exit(error == nil ? 0 : 1)
 }
-RunLoop.main.run()
 #endif
 

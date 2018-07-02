@@ -16,7 +16,7 @@ public struct SearchQuery: Codable {
 
 public struct DocumentContainer: Codable {
     public let id: String
-    public let key: String
+    public let key: String?
     public let doc: Package?
 }
 

@@ -61,9 +61,9 @@ public class Cloudant {
         
         let req = URLRequest(url: url)
         
-        return perform(request: req, transformingResponseTo: FindResult.self, debug: true)
+        return perform(request: req, transformingResponseTo: FindAllResult.self, debug: false)
             .map({ (results) -> [Package] in
-                return results.docs
+                return results.rows.compactMap { $0.doc }
             })
     }
     

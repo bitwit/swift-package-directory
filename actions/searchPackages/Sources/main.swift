@@ -35,10 +35,7 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
 guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
     fatalError("no cloudantUrl provided")
 }
-guard let searchIndex = ProcessInfo().environment["searchIndex"] else {
-    fatalError("no searchIndex provided")
-}
-main(param: Input(cloudantUrl: urlString, query: "s")) { output, error in
+main(param: Input(cloudantUrl: urlString, query: "sl")) { output, error in
     print(output, error)
     exit(error == nil ? 0 : 1)
 }

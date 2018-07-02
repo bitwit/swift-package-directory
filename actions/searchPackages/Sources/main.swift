@@ -5,8 +5,6 @@ import SPDCore
 struct Input: Codable {
     let cloudantUrl: String
     let query: String
-    let searchIndex: String
-    let skip: Int?
 }
 
 struct Output: Codable {
@@ -17,9 +15,7 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
     let cloudant = Cloudant(baseUrl: param.cloudantUrl)
     
     var sq = SearchQuery()
-    sq.selector = ["$text": param.query]
-    sq.use_index = param.searchIndex
-    sq.skip = param.skip ?? 0
+    sq.keyword = param.query
     _ = cloudant.search(query: sq)
         .done({ packages in
             print(packages)
@@ -33,7 +29,6 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
         .finally {
             exit(0)
     }
-    RunLoop.main.run()
 }
 
 #if os(macOS)
@@ -43,9 +38,10 @@ guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
 guard let searchIndex = ProcessInfo().environment["searchIndex"] else {
     fatalError("no searchIndex provided")
 }
-main(param: Input(cloudantUrl: urlString, query: "s", searchIndex: searchIndex, skip: 0)) { output, error in
+main(param: Input(cloudantUrl: urlString, query: "s")) { output, error in
     print(output, error)
     exit(error == nil ? 0 : 1)
 }
+RunLoop.main.run()
 #endif
 

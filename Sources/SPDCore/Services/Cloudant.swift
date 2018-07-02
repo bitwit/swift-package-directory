@@ -31,30 +31,6 @@ public class Cloudant {
         self.baseUrl = baseUrl
     }
     
-    public func find(repository: String) -> Promise<Package?> {
-        
-        guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
-            return Promise(error: SPDError.fatal("invalid url"))
-        }
-        
-        let query: [String: [String: String]] = [
-            "selector": [
-                "html_url": "https://github.com/" + repository.lowercased()
-            ]
-        ]
-        
-        var req = URLRequest(url: url)
-        let reqData = try! JSONSerialization.data(withJSONObject: query, options: [])
-        req.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.httpBody = reqData
-        req.httpMethod = "POST"
-        
-        return perform(request: req, transformingResponseTo: FindResult.self)
-            .map({ (results) -> Package? in
-                return results.docs.first
-            })
-    }
-    
     public func getMostPopular(popularIndex: String) -> Promise<[Package]> {
         
         guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
@@ -76,23 +52,42 @@ public class Cloudant {
     }
     
     public func search(query: SearchQuery) -> Promise<[Package]> {
-
-        guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
+        
+        let urlString = URL(string: baseUrl + "/swift-packages-directory/_design/keywordSearch/_search/keywordSearch?limit=\(query.limit)&q=keywords:\(query.keyword)&sort=%22-stargazers_count%22&include_docs=true")
+        
+        guard let url = urlString else {
             return Promise(error:  SPDError.fatal("invalid url"))
         }
-    
-
-        var req = URLRequest(url: url)
-        let reqData = try! JSONEncoder().encode(query)
-        req.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        req.httpBody = reqData
-        req.httpMethod = "POST"
         
-        print(req.cURL)
+        let req = URLRequest(url: url)
         
         return perform(request: req, transformingResponseTo: FindResult.self, debug: true)
             .map({ (results) -> [Package] in
                 return results.docs
+            })
+    }
+    
+    public func find(repository: String) -> Promise<Package?> {
+        
+        guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
+            return Promise(error: SPDError.fatal("invalid url"))
+        }
+        
+        let query: [String: [String: String]] = [
+            "selector": [
+                "html_url": "https://github.com/" + repository.lowercased()
+            ]
+        ]
+        
+        var req = URLRequest(url: url)
+        let reqData = try! JSONSerialization.data(withJSONObject: query, options: [])
+        req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = reqData
+        req.httpMethod = "POST"
+        
+        return perform(request: req, transformingResponseTo: FindResult.self)
+            .map({ (results) -> Package? in
+                return results.docs.first
             })
     }
     
@@ -138,7 +133,7 @@ public class Cloudant {
         return perform(request: req, transformingResponseTo: WrittenDocumentResult.self)
             .tap({ (result) in
                 if case let .rejected(e) = result {
-                   print(package.full_name, package._rev)
+                   print(package.full_name, package._rev, e)
                 }
             })
             .map({ _ -> Package in

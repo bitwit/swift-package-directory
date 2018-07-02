@@ -5,12 +5,13 @@ public enum SPDError: Error {
 }
 
 public struct SearchQuery: Codable {
-    public var selector: [String: String] = [:]
-    public var use_index: String = ""
+
+    public var keyword: String = ""
     public var limit: Int = 10
-    public var skip: Int = 0
     
-    public init() {}
+    public init() {
+        
+    }
 }
 
 public struct DocumentContainer: Codable {

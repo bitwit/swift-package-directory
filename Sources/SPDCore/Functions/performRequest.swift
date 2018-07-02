@@ -1,7 +1,16 @@
 import Foundation
 import PromiseKit
 
+fileprivate var callCount = [String: Int]()
+public func reportCallCount() {
+    print(callCount)
+}
+
 public func perform<T: Decodable>(request: URLRequest, transformingResponseTo responseType: T.Type, debug: Bool = false) -> Promise<T> {
+    
+    let host = request.url?.host ?? "unknown"
+    callCount[host, default: 0] += 1
+    
     return Promise { resolver in
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             

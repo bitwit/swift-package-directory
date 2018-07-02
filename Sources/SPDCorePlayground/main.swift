@@ -25,12 +25,17 @@ func main () {
     let github = GitHub(username: githubUsername, accessToken: githubAccessToken)
     let packageManager = PackageManager(cloudant: cloudant, github: github)
     
-    packageManager.searchAndAddNewPackages()
+    
+    cloudant.optimizedSearch(keyword: "sl")
+//    packageManager.searchAndAddNewPackages()
         .done { (pkgs) in
             print("total added", pkgs.count)
             print(pkgs.map { $0.full_name! }.joined(separator: "\n"))
+            reportCallCount()
+            exit(0)
         }.catch { (err) in
             print(err)
+            exit(1)
     }
     
     RunLoop.main.run()

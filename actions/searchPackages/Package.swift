@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "search-packages",
     dependencies: [
-        .package(url: "../../", from: "0.0.11")
+        .package(url: "../../", from: "0.0.12")
     ],
     targets: [
         .target(

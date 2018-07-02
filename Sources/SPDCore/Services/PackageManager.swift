@@ -10,7 +10,9 @@ public class PackageManager {
         self.cloudant = cloudant
         self.github = github
     }
-    
+
+    // currently grouping 10 packages at a time
+    // to stay withing 10 write/sec limit on free tier of cloudant
     public func updatePackagesInChunks(packages: [Package]) -> Promise<[Package]> {
         let chunkSize = 10
         let chunks = stride(from: 0, to: packages.count, by: chunkSize).map {
@@ -29,7 +31,9 @@ public class PackageManager {
             }
         })
     }
-    
+        
+    // The delay after updates in this function is only
+    // due to the 10 writes/sec limit on free tier of cloudant
     public func update(packages: [Package]) -> Promise<[Package]> {
         let delayTime = 2.0
         

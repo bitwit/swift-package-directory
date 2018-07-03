@@ -53,15 +53,9 @@ echo '_ = _whisk_semaphore.wait(timeout: .distantFuture)' >> $DEST_SOURCE/main.s
 
 echo \"Compiling $1...\"
 cd $BASE_PATH/actions/$1
-# BIN_PATH=\$($SWIFT_BUILD_COMMAND --show-bin-path)
 $SWIFT_BUILD_COMMAND
 
-# stat \$BIN_PATH/Action
-# stat .build/release/Action 
-
 echo 'Creating archive $1.zip...'
-# mkdir -p .build/release/
-# cp \$BIN_PATH/Action .build/release/Action
 mkdir -p /owexec/$OUTPUT_DIR
 zip \"/owexec/$OUTPUT_DIR/$1.zip\" .build/release/Action
 "

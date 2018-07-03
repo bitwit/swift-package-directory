@@ -2,6 +2,7 @@ import Foundation
 
 public enum SPDError: Error {
     case fatal(String)
+    case earlyExit(String)
 }
 
 public struct SearchQuery: Codable {

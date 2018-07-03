@@ -4,8 +4,21 @@ import PromiseKit
 public class PackageCrawler {
     
     let packageManager: PackageManager
-    var lastDateCrawled: Date = Date()
-    var existingPackages: [String: Package] = [:]
+    
+    fileprivate var lastDateCrawled: Date = Date()
+    fileprivate var crawlDateRangeComponents: DateComponents {
+        var dc = DateComponents()
+        dc.day = -3
+        return dc
+    }
+    fileprivate var earliestDate: Date {
+        let formatter = ISO8601DateFormatter()
+        return formatter.date(from: "2014-01-01T00:00:00Z")!
+    }
+    
+    fileprivate var existingPackages: [String: Package] = [:]
+    fileprivate var githubRateLimitRemaining: Int = 0
+    fileprivate var githubRateLimitRemainderCutOff: Int = 500
     
     fileprivate var appConfig: AppConfig!
     
@@ -16,14 +29,17 @@ public class PackageCrawler {
     public func execute() -> Promise<[Package]> {
         print("starting crawler")
         
-        return when(fulfilled: getAppConfig(), self.getExistingPackageDictionary())
-            .then { (appConfig, existingPackages) -> Promise<[Package]> in
-                
-                print("config", appConfig)
+        return when(fulfilled: getAppConfig(), getExistingPackageDictionary(), packageManager.github.getRateLimit())
+            .then { (appConfig, existingPackages, rateLimits) -> Promise<[Package]> in
                 
                 self.appConfig = appConfig
                 self.lastDateCrawled = appConfig.crawler.last_crawled_date
                 self.existingPackages = existingPackages
+                self.githubRateLimitRemaining = rateLimits.rate.remaining
+                print("GH Rate Limit Remaining: ", self.githubRateLimitRemaining)
+                if self.githubRateLimitRemaining <= self.githubRateLimitRemainderCutOff {
+                    return Promise(error: SPDError.earlyExit("Approaching rate limit"))
+                }
                 return self.crawl()
             }
     }
@@ -53,12 +69,12 @@ public class PackageCrawler {
             }
             .then { packages -> Promise<[Package]> in
                 let totalCallsSoFar = Networking.callCount["api.github.com", default: 0]
-                print("total github calls so far", totalCallsSoFar)
-                if totalCallsSoFar < 4000 {
+                print("total github calls so far/limit", totalCallsSoFar, self.githubRateLimitRemaining)
+                if (self.githubRateLimitRemaining - totalCallsSoFar) > self.githubRateLimitRemainderCutOff {
                     print("attempting to crawl next range")
                     return self.crawl().map { packages + $0 }
                 } else {
-                    print("approaching rate limit, finishing")
+                    print("approaching rate limit, finishing up")
                     return Promise { $0.fulfill(packages) }
                 }
         }
@@ -69,12 +85,9 @@ public class PackageCrawler {
         let calendar = Calendar.init(identifier: .gregorian)
         
         //crawls backward in time
-        let startDate = calendar.date(byAdding: .day, value: -14, to: lastDateCrawled)!
+        let startDate = calendar.date(byAdding: crawlDateRangeComponents, to: lastDateCrawled)!
         let endDate = lastDateCrawled
         lastDateCrawled = startDate
-        
-        let formatter = ISO8601DateFormatter()
-        let earliestDate = formatter.date(from: "2014-01-01T00:00:00Z")!
 
         //reset if crawling earlier than 2014
         if endDate < earliestDate {

@@ -15,6 +15,16 @@ guard let popularIndex = ProcessInfo.processInfo.environment["popularIndex"] els
     fatalError("no popularIndex")
 }
 
+class AnyOutput<R: Codable>: WhiskOutput {
+
+    typealias ResultType = R
+    
+    static func create(fromResult result: R) -> Self {
+        print(result)
+        return self.init()
+    }
+}
+
 func main () {
     
     let startTime = Date()
@@ -24,31 +34,23 @@ func main () {
     let github = GitHub(username: githubUsername, accessToken: githubAccessToken)
     let packageManager = PackageManager(cloudant: cloudant, github: github)
     let packageCrawler = PackageCrawler(packageManager: packageManager)
-    
-    github.getRateLimit()
-        .done { limits in
-            print(limits)
-            exit(0)
-    }
+//
+//    github.getRateLimit()
+//        .done { limits in
+//            print(limits)
+//            print(limits.rate.reset)
+//            exit(0)
+//    }
+//    RunLoop.main.run()
     
 //    var query = SearchQuery()
-//    query.keyword = "sl"
-//    cloudant.search(query: query)
+//    query.keyword = "d"
+//    let task = cloudant.search(query: query)
     
-//    packageCrawler.execute()
-//        .done { (pkgs) in
-//            print("total", pkgs.count)
-//            print(pkgs.map { $0.full_name! }.joined(separator: "\n"))
-//            Networking.reportCallCount()
-//            print("task completed in \(-startTime.timeIntervalSinceNow)s")
-//            exit(0)
-//        }.catch { (err) in
-//            print(err)
-//            print("task worked for \(-startTime.timeIntervalSinceNow)s before error")
-//            exit(1)
-//    }
-//
-    RunLoop.main.run()
+    let task = packageCrawler.execute()
+    whiskWrap(task, outputType: AnyOutput<[Package]>.self) { o, e in
+        print(o, e)
+    }
 }
 
 main()

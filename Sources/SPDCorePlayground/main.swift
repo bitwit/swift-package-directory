@@ -15,13 +15,14 @@ guard let popularIndex = ProcessInfo.processInfo.environment["popularIndex"] els
     fatalError("no popularIndex")
 }
 
-class AnyOutput<R: Codable>: WhiskOutput {
+struct AnyOutput<R: Codable>: WhiskOutput {
 
     typealias ResultType = R
     
-    static func create(fromResult result: R) -> Self {
+    let success = true
+    
+    init(result: R)  {
         print(result)
-        return self.init()
     }
 }
 

@@ -5,14 +5,14 @@ public typealias WhiskOutput = Codable & GeneratableFromFunctionResult
 public protocol GeneratableFromFunctionResult {
     associatedtype ResultType: Codable
     
-    static func create(fromResult result: ResultType) -> Self
+    init(result: ResultType)
 }
 
 public func whiskWrap<T, O: WhiskOutput>(_ promise: Promise<T>, outputType: O.Type , completion: @escaping (O?, Error?) -> Void) where T == O.ResultType {
     
     let startTime = Date()
     promise.done { (result) in
-        let output = O.create(fromResult: result)
+        let output = O.init(result: result)
         completion(output, nil)
         print("task completed in \(-startTime.timeIntervalSinceNow)s")
         exit(0)

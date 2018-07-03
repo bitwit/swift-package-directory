@@ -8,8 +8,15 @@ struct Input: Codable {
     let githubAccessToken: String
 }
 
-struct Output: Codable {
+class Output: WhiskOutput {
+    
+    typealias ResultType = [Package]
+    
     let success: Bool = true
+    
+    static func create(fromResult result: ResultType) -> Self {
+        return self.init()
+    }
 }
 
 func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void {
@@ -20,20 +27,8 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
     let packageManager = PackageManager(cloudant: cloudant, github: github)
     let packageCrawler = PackageCrawler(packageManager: packageManager)
     
-    packageCrawler.execute()
-        .done({ packages in
-            print(packages)
-            print(packages.count, "packages found")
-            completion(Output(), nil)
-        })
-        .catch { err in
-            completion(nil, err)
-            exit(1)
-    }
-        .finally {
-            exit(0)
-    }
-    RunLoop.main.run()
+    let task = packageCrawler.execute()
+    whiskWrap(task, outputType: Output.self, completion: completion)
 }
 
 #if os(macOS)
@@ -48,7 +43,6 @@ guard let githubAccessToken = ProcessInfo().environment["githubAccessToken"] els
 }
 main(param: Input(cloudantUrl: urlString, githubUsername: githubUsername, githubAccessToken: githubAccessToken)) { output, error in
     print(output, error)
-    exit(error == nil ? 0 : 1)
 }
 #endif
 

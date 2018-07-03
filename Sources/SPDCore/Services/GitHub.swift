@@ -19,6 +19,17 @@ public struct GitFile: Codable {
     let url: String?
 }
 
+public struct RateLimit: Codable {
+    public var limit: Int
+    public var remaining: Int
+    public var reset: Int
+}
+
+public struct GitHubRateLimitResponse: Codable {
+    public var resources: [String: RateLimit]
+    public var rate: RateLimit
+}
+
 public class GitHub {
     
     public let username: String
@@ -27,6 +38,23 @@ public class GitHub {
     public init(username: String, accessToken: String) {
         self.username = username
         self.accessToken = accessToken
+    }
+    
+    public func getRateLimit() -> Promise<GitHubRateLimitResponse> {
+        let urlString = "https://api.github.com/rate_limit"
+        
+        guard let url = URL(string: urlString) else {
+            return Promise(error: SPDError.fatal("invalid url"))
+        }
+        
+        var req = URLRequest(url: url)
+        
+        let userPasswordString = "\(username):\(accessToken)"
+        let userPasswordData = userPasswordString.data(using: .utf8)
+        let base64EncodedCredential = userPasswordData!.base64EncodedString()
+        req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
+        
+        return Networking.perform(req, transformingResponseTo: GitHubRateLimitResponse.self)
     }
     
     public func getRepoInfo(name: String) -> Promise<Package> {

@@ -26,6 +26,7 @@ public struct WrittenDocumentResult: Codable {
 public class Cloudant {
     
     public let baseUrl: String
+    public var databaseName: String = "swift-packages-directory"
     
     public init(baseUrl: String) {
         self.baseUrl = baseUrl
@@ -33,7 +34,7 @@ public class Cloudant {
     
     public func getMostPopular(popularIndex: String) -> Promise<[Package]> {
         
-        guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
+        guard let url = URL(string: baseUrl + "/\(databaseName)/_find") else {
             return Promise(error:  SPDError.fatal("invalid url"))
         }
         
@@ -45,7 +46,7 @@ public class Cloudant {
         req.httpBody = reqData
         req.httpMethod = "POST"
         
-        return perform(request: req, transformingResponseTo: FindResult.self)
+        return Networking.perform(req, transformingResponseTo: FindResult.self)
             .map({ (results) -> [Package] in
                 return results.docs
             })
@@ -53,7 +54,7 @@ public class Cloudant {
     
     public func search(query: SearchQuery) -> Promise<[Package]> {
         
-        let urlString = URL(string: baseUrl + "/swift-packages-directory/_design/keywordSearch/_search/keywordSearch?limit=\(query.limit)&q=keywords:\(query.keyword)&sort=%22-stargazers_count%22&include_docs=true")
+        let urlString = URL(string: baseUrl + "/\(databaseName)/_design/keywordSearch/_search/keywordSearch?limit=\(query.limit)&q=keywords:\(query.keyword)&sort=%22-stargazers_count%22&include_docs=true")
         
         guard let url = urlString else {
             return Promise(error:  SPDError.fatal("invalid url"))
@@ -61,7 +62,7 @@ public class Cloudant {
         
         let req = URLRequest(url: url)
         
-        return perform(request: req, transformingResponseTo: FindAllResult.self, debug: false)
+        return Networking.perform(req, transformingResponseTo: FindAllResult.self, debug: false)
             .map({ (results) -> [Package] in
                 return results.rows.compactMap { $0.doc }
             })
@@ -69,7 +70,7 @@ public class Cloudant {
     
     public func find(repository: String) -> Promise<Package?> {
         
-        guard let url = URL(string: baseUrl + "/swift-packages-directory/_find") else {
+        guard let url = URL(string: baseUrl + "/\(databaseName)/_find") else {
             return Promise(error: SPDError.fatal("invalid url"))
         }
         
@@ -85,7 +86,7 @@ public class Cloudant {
         req.httpBody = reqData
         req.httpMethod = "POST"
         
-        return perform(request: req, transformingResponseTo: FindResult.self)
+        return Networking.perform(req, transformingResponseTo: FindResult.self)
             .map({ (results) -> Package? in
                 return results.docs.first
             })
@@ -93,7 +94,7 @@ public class Cloudant {
     
     public func findAll() -> Promise<[Package]> {
         
-        guard let url = URL(string: baseUrl + "/swift-packages-directory/_all_docs?include_docs=true") else {
+        guard let url = URL(string: baseUrl + "/\(databaseName)/_all_docs?include_docs=true") else {
             return Promise(error: SPDError.fatal("invalid url"))
         }
         
@@ -107,7 +108,7 @@ public class Cloudant {
         req.httpBody = reqData
         req.httpMethod = "POST"
         
-        return perform(request: req, transformingResponseTo: FindAllResult.self)
+        return Networking.perform(req, transformingResponseTo: FindAllResult.self)
             .map({ (results) -> [Package]  in
                 return results.rows.compactMap({ $0.doc })
             })
@@ -115,30 +116,56 @@ public class Cloudant {
     
     public func writeToDB(package: Package) -> Promise<Package> {
         
-        guard let url = URL(string: baseUrl + "/swift-packages-directory/\(package._id ?? "")") else {
+        guard let url = URL(string: baseUrl + "/\(databaseName)/\(package._id ?? "")") else {
             return Promise(error: SPDError.fatal("invalid url"))
         }
         
         var finalPackage = package
         finalPackage.buildKeywords()
         finalPackage.html_url = finalPackage.html_url?.lowercased()
-        finalPackage.last_package_update = Date()
+//        finalPackage.last_package_update = Date()
         
         var req = URLRequest(url: url)
-        let reqData = try! JSONEncoder().encode(finalPackage)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let reqData = try! encoder.encode(finalPackage)
         req.addValue("application/json", forHTTPHeaderField: "Content-Type")
         req.httpBody = reqData
         req.httpMethod = (package._id?.isEmpty == false) ? "PUT" : "POST"
         
-        return perform(request: req, transformingResponseTo: WrittenDocumentResult.self)
-            .tap({ (result) in
-                if case let .rejected(e) = result {
-                   print(package.full_name, package._rev, e)
-                }
-            })
+        return Networking.perform(req, transformingResponseTo: WrittenDocumentResult.self)
             .map({ _ -> Package in
                 return finalPackage
             })
+    }
+    
+    public func getAppConfig() -> Promise<AppConfig> {
+        
+        guard let url = URL(string: baseUrl + "/\(databaseName)/config") else {
+            return Promise(error: SPDError.fatal("invalid url"))
+        }
+        
+        let req = URLRequest(url: url)
+        return Networking.perform(req, transformingResponseTo: AppConfig.self)
+    }
+    
+    public func setAppConfig(_ config: AppConfig) -> Promise<WrittenDocumentResult> {
+        
+        guard let url = URL(string: baseUrl + "/\(databaseName)/config") else {
+            return Promise(error: SPDError.fatal("invalid url"))
+        }
+        
+        var req = URLRequest(url: url)
+        
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let reqData = try! encoder.encode(config)
+        
+        req.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.httpBody = reqData
+        req.httpMethod = "PUT"
+        
+        return Networking.perform(req, transformingResponseTo: WrittenDocumentResult.self)
     }
 
 }

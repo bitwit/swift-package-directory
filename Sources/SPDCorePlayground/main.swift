@@ -20,22 +20,29 @@ guard let searchIndex = ProcessInfo.processInfo.environment["searchIndex"] else 
 
 func main () {
     
+    let startTime = Date()
     print("starting SPDCore playground")
     let cloudant = Cloudant(baseUrl: urlString)
+    cloudant.databaseName = "test-bed"
     let github = GitHub(username: githubUsername, accessToken: githubAccessToken)
     let packageManager = PackageManager(cloudant: cloudant, github: github)
+    let packageCrawler = PackageCrawler(packageManager: packageManager)
     
-    var query = SearchQuery()
-    query.keyword = "sl"
-    cloudant.search(query: query)
+//    var query = SearchQuery()
+//    query.keyword = "sl"
+//    cloudant.search(query: query)
+    
+    packageCrawler.execute()
 //    packageManager.searchAndAddNewPackages()
         .done { (pkgs) in
             print("total", pkgs.count)
             print(pkgs.map { $0.full_name! }.joined(separator: "\n"))
-            reportCallCount()
+            Networking.reportCallCount()
+            print("task completed in \(-startTime.timeIntervalSinceNow)s")
             exit(0)
         }.catch { (err) in
             print(err)
+            print("task worked for \(-startTime.timeIntervalSinceNow)s before error")
             exit(1)
     }
     

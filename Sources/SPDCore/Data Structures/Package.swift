@@ -29,7 +29,7 @@ public struct Package: Codable {
     
     public var latest_tag: String?
     
-    public var last_package_update: Date?
+//    public var last_package_update: Date?
     
     public mutating func applyIdentification(from package: Package) {
         self._id = package._id

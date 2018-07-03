@@ -20,3 +20,13 @@ public struct DocumentContainer: Codable {
     public let doc: Package?
 }
 
+public struct AppConfig: Codable {
+    public var _id: String
+    public var _rev: String
+    public var crawler: CrawlerConfig
+
+}
+
+public struct CrawlerConfig: Codable {
+    public var last_crawled_date: Date
+}

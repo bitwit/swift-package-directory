@@ -44,7 +44,7 @@ public class GitHub {
         let base64EncodedCredential = userPasswordData!.base64EncodedString()
         req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
 
-        return perform(request: req, transformingResponseTo: Package.self)
+        return Networking.perform(req, transformingResponseTo: Package.self)
             .map({ (package) -> Package in
                 guard package.full_name != nil && package.html_url != nil else {
                     throw SPDError.fatal("Package does not exist")
@@ -67,13 +67,7 @@ public class GitHub {
         let base64EncodedCredential = userPasswordData!.base64EncodedString()
         req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
         
-        return perform(request: req, transformingResponseTo: [GitTag].self)
-            .map({ (tags) -> [GitTag] in
-                if tags.isEmpty {
-                    print("[WARNING]: Package \(name) has no tagged versions")
-                }
-                return tags
-            })
+        return Networking.perform(req, transformingResponseTo: [GitTag].self)
     }
     
     // This is experimental API, so in case of any problems we'll recover with an empty array
@@ -92,17 +86,21 @@ public class GitHub {
         req.addValue("application/vnd.github.mercy-preview+json", forHTTPHeaderField: "Accept")
         req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
         
-        return perform(request: req, transformingResponseTo: GitTopics.self)
+        return Networking.perform(req, transformingResponseTo: GitTopics.self)
             .map { $0.names }
             .recover({ (err) -> Guarantee<[String]> in
                 return Guarantee { $0([]) }
             })
     }
     
-    public func searchForSwiftPackages(page: Int = 1, limit: Int = 100) -> Promise<[Package]> {
+    public func searchForSwiftPackages(inDateCreationRange range: (Date, Date), page: Int = 1, limit: Int = 100) -> Promise<GitSearchResults> {
+        
+        let formatter = ISO8601DateFormatter()
+        let startDate = formatter.string(from: range.0)
+        let endDate = formatter.string(from: range.1)
         
         let repoUrlString = "https://api.github.com/search/repositories?"
-        let cleanString = repoUrlString + "q=package+language:swift+stars:>0&page=\(page)&per_page=\(limit)".addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
+        let cleanString = repoUrlString + "q=language:swift+stars:>0+created:\(startDate)..\(endDate)&page=\(page)&per_page=\(limit)".addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         
         guard let url = URL(string: cleanString) else {
             return Promise(error: SPDError.fatal("invalid url \(repoUrlString)"))
@@ -114,11 +112,10 @@ public class GitHub {
         let base64EncodedCredential = userPasswordData!.base64EncodedString()
         req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
         
-        return perform(request: req, transformingResponseTo: GitSearchResults.self)
-            .map { $0.items }
+        return Networking.perform(req, transformingResponseTo: GitSearchResults.self)
     }
     
-    public func determineIfRepoHasPackageSwiftFile(name: String) -> Promise<Bool> {
+    public func getRepoRootContents(name: String) -> Promise<GitRepoContents> {
         let contentsUrl = "https://api.github.com/repos/\(name)/git/trees/master"
         
         guard let url = URL(string: contentsUrl) else {
@@ -131,7 +128,9 @@ public class GitHub {
         let base64EncodedCredential = userPasswordData!.base64EncodedString()
         req.addValue("Basic \(base64EncodedCredential)", forHTTPHeaderField: "Authorization")
         
-        return perform(request: req, transformingResponseTo: GitRepoContents.self)
-            .map { $0.tree.contains(where: { $0.path == "Package.swift" }) }
+        return Networking.perform(req, transformingResponseTo: GitRepoContents.self)
+            .recover({ _ -> Guarantee<GitRepoContents> in
+                return Guarantee { $0( GitRepoContents(tree: []) ) }
+            })
     }
 }

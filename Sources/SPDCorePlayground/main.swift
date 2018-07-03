@@ -14,9 +14,6 @@ guard let githubAccessToken = ProcessInfo.processInfo.environment["githubAccessT
 guard let popularIndex = ProcessInfo.processInfo.environment["popularIndex"] else {
     fatalError("no popularIndex")
 }
-guard let searchIndex = ProcessInfo.processInfo.environment["searchIndex"] else {
-    fatalError("no searchIndex")
-}
 
 func main () {
     

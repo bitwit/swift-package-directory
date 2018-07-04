@@ -13,14 +13,14 @@ public func whiskWrap<T, O: WhiskOutput>(_ promise: Promise<T>, outputType: O.Ty
     let startTime = Date()
     promise.done { (result) in
         let output = O.init(result: result)
+//        print("task completed in \(-startTime.timeIntervalSinceNow)s")
         completion(output, nil)
-        print("task completed in \(-startTime.timeIntervalSinceNow)s")
         exit(0)
     }
     .catch { (err) in
             print(err)
-            print("task worked for \(-startTime.timeIntervalSinceNow)s before error")
-            
+//            print("task worked for \(-startTime.timeIntervalSinceNow)s before error")
+        
             guard let spdError = err as? SPDError else {
                 completion(nil, err)
                 exit(1)

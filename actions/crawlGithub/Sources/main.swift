@@ -8,14 +8,14 @@ struct Input: Codable {
     let githubAccessToken: String
 }
 
-class Output: WhiskOutput {
+struct Output: WhiskOutput {
     
     typealias ResultType = [Package]
     
     let success: Bool = true
     
-    static func create(fromResult result: ResultType) -> Self {
-        return self.init()
+    init(result: ResultType) {
+
     }
 }
 

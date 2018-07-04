@@ -2,26 +2,20 @@ import Foundation
 import PromiseKit
 import SPDCore
 
-struct Output: Codable, GeneratableFromFunctionResult {
+struct Output: WhiskOutput {
     
-    typealias ResultType = String
+    typealias ResultType = Bool
     
-    let success: Bool = true
-    let result: String
+    let success: Bool
     
-    init(result: String) {
-        self.result = result
+    init(result: Bool) {
+        self.success = result
     }
 }
 
 func main(completion: @escaping (Output?, Error?) -> Void) -> Void {
-    
-    let task = Promise { $0.fulfill("Done") }
-    whiskWrap(task, outputType: Output.self) { o, e in
-        completion(o, e)
-    }
-
-    // completion(Output.init(result: "yoyo"), nil)
+    let task = Promise { $0.fulfill(true) }
+    whiskWrap(task, outputType: Output.self, completion: completion)
 }
 
 #if os(macOS)

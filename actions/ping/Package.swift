@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ping",
     dependencies: [
-        .package(url: "../../", from: "0.1.3")
+        .package(url: "../../", from: "0.1.4")
     ],
     targets: [
         .target(

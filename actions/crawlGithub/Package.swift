@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "crawl-github",
     dependencies: [
-        .package(url: "../../", from: "0.1.4")
+        .package(url: "../../", from: "0.1.5")
     ],
     targets: [
         .target(

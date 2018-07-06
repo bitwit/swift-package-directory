@@ -12,10 +12,17 @@ struct Output: WhiskOutput {
     
     typealias ResultType = [Package]
     
-    let success: Bool = true
+    let success: Bool
+    let message: String
     
     init(result: ResultType) {
+        self.success = true
+        self.message = "Added \(result.count) Packages"
+    }
 
+     init(error: SPDError) {
+        self.success = false
+        self.message = String(describing: error)
     }
 }
 

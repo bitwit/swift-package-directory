@@ -49,11 +49,11 @@ func main () {
 //    }
 //    RunLoop.main.run()
     
-//    var query = SearchQuery()
-//    query.keyword = "d"
-//    let task = cloudant.search(query: query)
+    var query = SearchQuery()
+    query.keyword = "d s"
+    let task = cloudant.search(query: query)
     
-    let task = packageCrawler.execute()
+//    let task = packageCrawler.execute()
     whiskWrap(task, outputType: AnyOutput<[Package]>.self) { o, e in
         print(o, e)
     }

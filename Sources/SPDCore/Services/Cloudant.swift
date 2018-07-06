@@ -54,9 +54,12 @@ public class Cloudant {
     
     public func search(query: SearchQuery) -> Promise<[Package]> {
         
-        let urlString = URL(string: baseUrl + "/\(databaseName)/_design/keywordSearch/_search/keywordSearch?limit=\(query.limit)&q=keywords:\(query.keyword)&sort=%22-stargazers_count%22&include_docs=true")
+        let urlString = baseUrl
+            + "/\(databaseName)/_design/keywordSearch/_search/keywordSearch?limit=\(query.limit)&q=keywords:"
+            + "\(query.keyword)&sort=\"-stargazers_count\"&include_docs=true"
+                .addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!
         
-        guard let url = urlString else {
+        guard let url = URL(string: urlString) else {
             return Promise(error:  SPDError.fatal("invalid url"))
         }
         

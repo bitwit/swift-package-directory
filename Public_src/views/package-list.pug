@@ -3,3 +3,5 @@ ul.results-list.list-group-flush.row
     h4.text-center.mt-5 No Results Found For {{ searchQuery }}
   li.container.list-group-item.col-12.mt-4(v-for="result in searchResults")
     include list-item-content.pug
+div.loader-container.col-12(v-if="searchResults == null && searchQuery.length > 0")
+    include svg/oval-loader.svg

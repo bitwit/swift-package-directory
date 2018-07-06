@@ -14,6 +14,8 @@ struct Output: WhiskOutput {
 }
 
 func main(completion: @escaping (Output?, Error?) -> Void) -> Void {
+    print(ProcessInfo.processInfo.environment)
+    print(ProcessInfo.processInfo.arguments)
     let task = Promise { $0.fulfill(true) }
     whiskWrap(task, outputType: Output.self, completion: completion)
 }

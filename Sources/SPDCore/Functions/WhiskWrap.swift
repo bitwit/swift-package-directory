@@ -6,6 +6,7 @@ public protocol GeneratableFromFunctionResult {
     associatedtype ResultType: Codable
     
     init(result: ResultType)
+    init(error: SPDError)
 }
 
 public func whiskWrap<T, O: WhiskOutput>(_ promise: Promise<T>, outputType: O.Type , completion: @escaping (O?, Error?) -> Void) where T == O.ResultType {
@@ -26,9 +27,11 @@ public func whiskWrap<T, O: WhiskOutput>(_ promise: Promise<T>, outputType: O.Ty
                 exit(1)
             }
             
+            let output = O.init(error: spdError)
+            
             switch spdError {
             case .earlyExit:
-                completion(nil, nil)
+                completion(output, nil)
                 exit(0)
             case .fatal:
                 completion(nil, spdError)

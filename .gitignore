@@ -1,6 +1,7 @@
 .DS_Store
 .build/
 build/
+/Public
 /Packages
 Package.resolved
 

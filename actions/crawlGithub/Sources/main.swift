@@ -22,7 +22,6 @@ struct Output: WhiskOutput {
 func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void {
 
     let cloudant = Cloudant(baseUrl: param.cloudantUrl)
-    cloudant.databaseName = "test-bed"
     let github = GitHub(username: param.githubUsername, accessToken: param.githubAccessToken)
     let packageManager = PackageManager(cloudant: cloudant, github: github)
     let packageCrawler = PackageCrawler(packageManager: packageManager)

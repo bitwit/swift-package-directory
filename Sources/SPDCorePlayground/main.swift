@@ -19,10 +19,15 @@ struct AnyOutput<R: Codable>: WhiskOutput {
 
     typealias ResultType = R
     
-    let success = true
+    let success: Bool
     
     init(result: R)  {
         print(result)
+        self.success = true
+    }
+    
+    init(error: SPDError) {
+        self.success = false
     }
 }
 

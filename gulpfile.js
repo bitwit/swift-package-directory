@@ -38,8 +38,8 @@ gulp.task('html', () => {
 
 gulp.task('styles', () => {
 	return gulp.src([
-		sourceRoot + 'scss/bootstrap.scss',
-		sourceRoot + 'scss/animate.scss',
+		sourceRoot + 'scss/bootstrap/bootstrap.scss',
+		sourceRoot + 'scss/bootstrap/animate.scss',
 		sourceRoot + 'scss/style.scss'
 	])
 	.pipe(sass().on('error', sass.logError))

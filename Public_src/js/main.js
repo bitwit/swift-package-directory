@@ -17,7 +17,8 @@ var vm = new Vue({
     popularResults: null,
     searchResults: null,
     addRepositoryName: "",
-    error: null
+    error: null,
+    previousSearchRequest: null
   },
   created: function () {
     let uri = window.location.search.substring(1); 
@@ -48,14 +49,24 @@ var vm = new Vue({
         return;
       }
       const url = `${this.apiBaseUrl}/search?query=${this.searchQuery}`;
-      this.$http.get(url).then(response => {
+      this.$http.get(url, {
+        before(request) {
+          if (this.previousSearchRequest) {
+            console.log('cancelling last request');
+            this.previousSearchRequest.abort();
+          }
+          this.previousSearchRequest = request
+        }
+      }).then(response => {
+        this.previousSearchRequest = null;
         this.searchResults = response.body.packages.map(element => {
           appendPackageDependencyString(element);
           return element;
         });
       }, error => {
+        this.previousSearchRequest = null;
         console.log(error);
-      });
+      })
     }, 200),
     addPackage: function () {
       const url = `${this.apiBaseUrl}/add`;

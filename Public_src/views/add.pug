@@ -14,5 +14,28 @@ block content
   section
     #results.container
       h3.text-center.mt-5(v-if="searchResults && searchResults.length == 1") Added!
-      h3.text-center.mt-5(v-if="error != null") Error!
+      h3.text-center.mt-5(v-if="error != null") Error Adding Package 😭
       include package-list.pug
+      hr
+  section
+    .container
+      .row.text-center
+        h3.col-12 About the Crawler
+        p.col-12 Currently Swift Package Directory focuses on find GitHub repos with 1st class SPM support.
+          br 
+          | It is intended to be a directory for CLI, server-side and cross platform swift projects
+          br
+          | until Apple officially supports SPM for iOS/MacOS Development in XCode.
+        h5.col-12 A repository indexed by the crawler:
+        ul.col-12.list-group
+          li.list-group-item Must have a Package.swift manifest file
+          li.list-group-item Must have at least 1 semver release tag i.e. "1.0.0"
+          li.list-group-item Must NOT contain a .podspec or Cartfile in the root
+          li.list-group-item Must have at least 1 star
+        p.col-12.mt-2 These rules are subject to change at any time
+        p.col-12 If your package was missed by the crawler add it here. None of the criteria above need to be met. 
+          br
+          | This is how popular libraries like AlamoFire were added, even though it supports Cocoapods and Carthage.
+        p.col-12 If your manually added package is not suitable for the site, Swift Package Directory reserves the right to remove packages at any time in an effort to maintain quality and consistency.
+        p.col-12 Feedback on the crawler is welcome any time and the 
+          a(target="_blank", href="https://github.com/bitwit/swift-package-directory/blob/master/Sources/SPDCore/Services/PackageCrawler.swift") full code is in the Github repo

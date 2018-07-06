@@ -1,7 +1,7 @@
 ul.results-list.list-group-flush.row
-  li.list-group-item.col-12(v-if="searchQuery.length > 0 && searchResults != null && searchResults.length === 0")
+  li.list-group-item.col-12(v-if="searchQuery.length > 0 && previousSearchRequest == null && searchResults.length === 0")
     h4.text-center.mt-5 No Results Found For {{ searchQuery }}
   li.container.list-group-item.col-12.mt-4(v-for="result in searchResults")
     include list-item-content.pug
-div.loader-container.col-12(v-if="searchResults == null && searchQuery.length > 0")
+div.loader-container.col-12(v-if="previousSearchRequest != null")
     include svg/oval-loader.svg

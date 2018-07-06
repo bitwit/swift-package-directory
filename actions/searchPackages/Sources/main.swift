@@ -7,8 +7,25 @@ struct Input: Codable {
     let query: String
 }
 
-struct Output: Codable {
+struct Output: WhiskOutput {
+
+    typealias ResultType = [Package]
+
+    let success: Bool
     let packages: [Package]
+    let message: String
+        
+    init(result: ResultType) {
+        self.success = true
+        self.packages = result
+        self.message = "Found \(result.count) Packages"
+    }
+
+     init(error: SPDError) {
+        self.success = false
+        self.packages = []
+        self.message = String(describing: error)
+    }
 }
 
 func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void {
@@ -16,27 +33,15 @@ func main(param: Input, completion: @escaping (Output?, Error?) -> Void) -> Void
     
     var sq = SearchQuery()
     sq.keyword = param.query
-    _ = cloudant.search(query: sq)
-        .done({ packages in
-            print(packages)
-            print(packages.count, "packages found")
-            completion(Output(packages: packages), nil)
-        })
-        .catch { err in
-            completion(nil, err)
-            exit(1)
-    }
-        .finally {
-            exit(0)
-    }
-    RunLoop.main.run()
+    let task = cloudant.search(query: sq)
+    whiskWrap(task, outputType: Output.self, completion: completion)
 }
 
 #if os(macOS)
 guard let urlString = ProcessInfo().environment["cloudantUrl"] else {
     fatalError("no cloudantUrl provided")
 }
-main(param: Input(cloudantUrl: urlString, query: "sl")) { output, error in
+main(param: Input(cloudantUrl: urlString, query: "s l")) { output, error in
     print(output, error)
     exit(error == nil ? 0 : 1)
 }

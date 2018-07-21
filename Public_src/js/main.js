@@ -12,7 +12,7 @@ var navApp = new Vue({
 var vm = new Vue({
   el: '#app',
   data: {
-    apiBaseUrl: "https://api.swiftpackage.directory",
+    apiBaseUrl: "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/40586e5b69123c610ddfdaef22f087df48bc2d55a7e5031a20f808b57d498761",
     searchQuery: "",
     popularResults: null,
     searchResults: null,

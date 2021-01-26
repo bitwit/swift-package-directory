@@ -1,3 +1,7 @@
+# NOTE:
+
+This site is offline and the database was merged with https://swiftpackageindex.com/
+
 # Swift Package Directory
 
 Code for http://swiftpackage.directory
